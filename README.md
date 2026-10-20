@@ -3,7 +3,7 @@
 *Whatever you do, don't press it.*
 
 A native SwiftUI iPhone app: one large, tactile red button that tells you not to press it. Every press
-counts, buzzes, and earns a hand-written reaction. Fully local and offline, with no accounts, backend, ads or analytics.
+counts, buzzes, and earns a hand-written reaction. Fully local and offline, with no accounts, backend, ads or analytics. The only network use is Apple's StoreKit for the optional purchase.
 
 - **Spec:** [`CLAUDE.md`](./CLAUDE.md)
 - **Release notes and App Store checklist:** [`docs/RELEASE.md`](./docs/RELEASE.md)
@@ -15,6 +15,7 @@ counts, buzzes, and earns a hand-written reaction. Fully local and offline, with
 - 100+ curated reactions in six press-count tiers, plus milestone lines (10, 25, 50, 100, 250, 500, 1000). No immediate repeats.
 - **Current run** (this app session), **personal best** and **total presses** (persisted in `UserDefaults`).
 - Share a rendered 1080×1350 achievement card (SwiftUI `ImageRenderer`) through the system share sheet.
+- **Optional Pro (StoreKit 2, one-time):** unlocks all button styles instantly; they can also be earned for free. Restore Purchases included.
 - **Collection:** 12 local achievements and 5 button styles (Classic + 4 unlockable) derived from the saved stats; unlock banner.
 - Accessibility labels/values/hints, Dynamic Type (stats stack at accessibility sizes), dark-mode-first UI.
 

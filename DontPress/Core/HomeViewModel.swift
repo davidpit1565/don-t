@@ -10,6 +10,8 @@ final class HomeViewModel {
     /// True once this run has set a new personal best (a tie with an older best does not count).
     private(set) var isAtPersonalBest = false
     private(set) var selectedTheme: ButtonTheme
+    /// Whether the Pro purchase is owned (all button styles unlocked). Set by the store layer.
+    private(set) var isPro: Bool
     /// One-line banner for newly unlocked achievements / button styles; cleared by the view.
     private(set) var unlockMessage: String?
 
@@ -26,7 +28,8 @@ final class HomeViewModel {
         let haptics = haptics ?? NoHaptics()
         self.haptics = haptics
         self.stats = service.stats
-        self.selectedTheme = ButtonTheme.resolve(id: service.savedThemeID, stats: service.stats)
+        self.isPro = service.savedIsPro
+        self.selectedTheme = ButtonTheme.resolve(id: service.savedThemeID, stats: service.stats, isPro: service.savedIsPro)
         self.reactionText = ReactionCatalog.idle
         haptics.prepare()
     }
@@ -41,7 +44,8 @@ final class HomeViewModel {
         pressCount &+= 1
 
         let newAchievements = Achievement.newlyUnlocked(before: before, after: result.stats)
-        let newThemes = ButtonTheme.newlyUnlocked(before: before, after: result.stats)
+        // With Pro everything is already unlocked, so earning a style is not news.
+        let newThemes = isPro ? [] : ButtonTheme.newlyUnlocked(before: before, after: result.stats)
         if !newAchievements.isEmpty || !newThemes.isEmpty {
             var parts: [String] = []
             if !newAchievements.isEmpty { parts.append("Achievement: " + newAchievements.map(\.title).joined(separator: ", ")) }
@@ -63,16 +67,26 @@ final class HomeViewModel {
 
     func dismissUnlockMessage() { unlockMessage = nil }
 
+    /// Called when the purchase state changes (purchase, restore, refund). Falls back to
+    /// Classic if the selected style is no longer unlocked.
+    func setPro(_ value: Bool) {
+        guard value != isPro else { return }
+        isPro = value
+        service.saveIsPro(value)
+        selectedTheme = ButtonTheme.resolve(id: selectedTheme.id, stats: stats, isPro: value)
+        if selectedTheme.id != service.savedThemeID { service.saveThemeID(selectedTheme.id) }
+    }
+
     /// Choosing a locked style is ignored.
     func selectTheme(_ theme: ButtonTheme) {
-        guard theme.isUnlocked(for: stats) else { return }
+        guard theme.isUnlocked(for: stats, isPro: isPro) else { return }
         selectedTheme = theme
         service.saveThemeID(theme.id)
     }
 
     var themeStatuses: [ThemeStatus] {
         ButtonTheme.all.map {
-            ThemeStatus(theme: $0, isUnlocked: $0.isUnlocked(for: stats), isSelected: $0 == selectedTheme)
+            ThemeStatus(theme: $0, isUnlocked: $0.isUnlocked(for: stats, isPro: isPro), isSelected: $0 == selectedTheme)
         }
     }
 

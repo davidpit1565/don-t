@@ -1,0 +1,33 @@
+{
+  "identifier" : "D0A70001",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "1.99",
+      "familyShareable" : false,
+      "internalID" : "6747000001",
+      "localizations" : [
+        {
+          "description" : "Unlock all button styles right away.",
+          "displayName" : "DON'T PRESS Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.davidpitchkhadze.dontpress.pro",
+      "referenceName" : "Pro",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

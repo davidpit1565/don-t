@@ -1,5 +1,7 @@
 # DON'T PRESS: App Store readiness
 
+> Copy-paste values and the step-by-step submission flow are in [`APP_STORE_CONNECT.md`](./APP_STORE_CONNECT.md).
+
 Status of this document: **preparation only. Nothing has been submitted or published,
 and approval is not promised.** Items are labelled Verified (checked in this repo),
 or Open (needs the owner, a Mac, or Apple tooling).
@@ -14,23 +16,28 @@ or Open (needs the owner, a Mac, or Apple tooling).
 | Deployment target | iOS 17.0, iPhone only (`TARGETED_DEVICE_FAMILY = 1`), portrait, dark appearance forced |
 | Signing | Automatic; `DEVELOPMENT_TEAM` is empty. **No team or credentials were invented.** |
 | Encryption | `ITSAppUsesNonExemptEncryption = NO` (the app uses no networking or custom crypto) |
-| Dependencies | None. No third-party packages, no SDKs. |
+| Dependencies | None. No third-party packages or SDKs (Apple's StoreKit only, for the optional Pro purchase). |
 | Icon | `DontPress/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png`: single 1024 px RGB PNG, no alpha |
 | Privacy manifest | `DontPress/PrivacyInfo.xcprivacy`: no tracking, no collected data, UserDefaults reason `CA92.1` |
 
 ## Blockers before submission (Open)
 
 1. Select your **development team** in Xcode (Signing & Capabilities); confirm you are happy with the bundle ID before creating the App Store Connect record.
-2. **Build, run, and test on a Mac.** No Xcode build has been performed on this project yet.
+2. **Build and tests:** CI on macOS (Xcode 16.4, iPhone simulator) builds the app and runs the unit and UI tests; see the Actions tab. Still do a manual pass on a real iPhone (haptics, VoiceOver, Dynamic Type, the purchase flow with a Sandbox account).
 3. **Privacy policy and support pages** are written (`docs/privacy.md`, `docs/support.md`, contact: David Pitchkhadze,
-   davidpit2008@gmail.com) and linked inside the app (`AppLinks.swift`). The links point to
-   `https://github.com/davidpit1565/don-t/blob/main/docs/...`, which **only resolves after this branch is merged to `main`**
-   (the repository must stay public). Use those same URLs in App Store Connect, or enable GitHub Pages and update `AppLinks.swift`
-   and the metadata together. Confirm both pages open in a logged-out browser before submitting.
+   davidpit2008@gmail.com), linked inside the app (`AppLinks.swift`), and were confirmed to return HTTP 200 for a logged-out
+   visitor after the merge to `main` (the repository must stay public). Use the same URLs in App Store Connect.
 4. Confirm the app name is available in App Store Connect and does not collide with an existing product (4.1, 2.3.7; the limit is 30 characters, and "DON'T PRESS" is 11).
-5. Capture real screenshots from a simulator or device (2.3.3).
+5. Screenshots: 8 generated images are in `docs/appstore/` (see below).
 6. Answer the age-rating questionnaire in App Store Connect (expected to be 4+; confirm there).
-7. Decide on pricing and availability.
+7. Decide on pricing and availability of the app (free, with the optional Pro purchase).
+8. **In-app purchase setup (required for Pro):**
+   - Accept the **Paid Apps Agreement** and complete banking and tax info in App Store Connect (Business). Without it, the product never loads.
+   - Create a **non-consumable** in-app purchase with Product ID exactly `com.davidpitchkhadze.dontpress.pro`, price tier around €1.99, display name "DON'T PRESS Pro", description "Unlock all button styles right away."
+   - Upload a review screenshot of the Pro offer (open the Collection and tap a locked style).
+   - Attach the in-app purchase to the app version you submit; it is reviewed together with the app.
+   - Test with a Sandbox tester and verify Restore Purchases after a reinstall.
+   - Local testing: `DontPress.storekit` at the repo root (Edit Scheme, Run, Options, StoreKit Configuration).
 
 ## Guideline review (checked against the live App Review Guidelines page)
 
@@ -64,6 +71,7 @@ or Open (needs the owner, a Mac, or Apple tooling).
   > • Tactile button with real haptics
   > • 100+ hand-written reactions that escalate the longer you ignore the warnings
   > • 12 achievements and 5 button styles (Classic, Blue Mistake, Stealth, Radioactive, Gold Standard) that unlock as you go
+  > • Optional one-time Pro purchase unlocks every button style instantly (they can also be earned for free)
   > • Current run, personal best and total presses
   > • Shareable achievement image through the standard iOS share sheet
   > • Works fully offline. No account, no ads, no tracking.
@@ -81,7 +89,7 @@ No iPad screenshots are needed (iPhone-only).
 
 ## Privacy declaration (derived from the code)
 
-* Data collected: **None.** Nothing leaves the device. The app contains no networking code, SDKs or analytics.
+* Data collected: **None by the developer.** The app contains no analytics, ads or third-party SDKs. The only network use is Apple's StoreKit for the optional purchase, which Apple handles.
 * Stored locally: personal best and total press count (`UserDefaults`, keys `dontpress.personalBest`, `dontpress.totalPresses`). The current run is never stored.
 * Tracking: **No.** Required-reason API: UserDefaults (`CA92.1`).
 * App Store Connect "App Privacy" answer expected: *Data Not Collected*. **Not finalised.** Re-verify against the shipped build and confirm in App Store Connect.
@@ -111,12 +119,12 @@ No iPad screenshots are needed (iPhone-only).
 
 ## App Review Notes (paste into App Store Connect → App Review Information → Notes)
 
-> DON'T PRESS is a fully offline, single-player toy. There is no login, no account, no network access and no in-app purchase, so no demo account is needed.
+> DON'T PRESS is a fully offline, single-player toy. There is no login and no account, so no demo account is needed. The only network use is Apple's StoreKit for one optional in-app purchase ("DON'T PRESS Pro", non-consumable) that unlocks all button styles immediately; the same styles can also be earned for free by playing.
 >
 > How to see everything in about a minute:
 > 1. Tap the big red button. Each press increments Current Run and Total Presses, plays a light haptic and shows a different hand-written reaction (100+ lines in six tiers that escalate as the run grows).
 > 2. Keep tapping: at 10, 25, 50, 100, 250, 500 and 1,000 presses a milestone line and a stronger haptic fire once. Achievements (12) and button styles (5) unlock as thresholds are reached; a banner announces each unlock.
-> 3. Tap the trophy icon (top right) to open Collection: choose an unlocked button style and see locked ones with their requirements and progress.
+> 3. Tap the trophy icon (top right) to open Collection: choose an unlocked button style and see locked ones with their requirements and progress. Tapping a locked style, or the Pro row at the bottom, shows the optional Pro offer (price, what it includes, and Restore Purchases). To test the purchase, use a Sandbox Apple ID.
 > 4. Tap "Share personal best" (enabled after the first press) to render a portrait achievement card with the user's real number and open the standard iOS share sheet.
 >
 > Current Run starts at zero on every cold launch by design; Personal Best and Total Presses are stored locally (UserDefaults). The app collects no data. Privacy Policy and Support pages are linked at the bottom of the main screen.

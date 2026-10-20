@@ -25,11 +25,12 @@ struct ButtonTheme: Equatable, Identifiable {
 
     static func theme(id: String) -> ButtonTheme? { all.first { $0.id == id } }
 
-    func isUnlocked(for stats: PressStats) -> Bool { rule.isMet(by: stats) }
+    /// Unlocked by playing (the rule) or, for everything, by owning Pro.
+    func isUnlocked(for stats: PressStats, isPro: Bool = false) -> Bool { isPro || rule.isMet(by: stats) }
 
     /// Stored choice if it still exists and is unlocked, otherwise Classic.
-    static func resolve(id: String?, stats: PressStats) -> ButtonTheme {
-        guard let id, let theme = theme(id: id), theme.isUnlocked(for: stats) else { return .classic }
+    static func resolve(id: String?, stats: PressStats, isPro: Bool = false) -> ButtonTheme {
+        guard let id, let theme = theme(id: id), theme.isUnlocked(for: stats, isPro: isPro) else { return .classic }
         return theme
     }
 
