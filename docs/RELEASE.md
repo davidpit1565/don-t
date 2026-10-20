@@ -70,14 +70,14 @@ or Open (needs the owner, a Mac, or Apple tooling).
 * **Keyword ideas (≤100 chars, check them yourself):** `button,press,red button,funny,clicker,tap,satisfying,haptic,fidget,absurd`
 * **Category:** Entertainment (primary; matches `LSApplicationCategoryType`). Consider Games > Casual as an alternative.
 
-## Screenshot plan (6.9" and 6.5" iPhone sets; captured from a real build)
+## Screenshots (generated; in `docs/appstore/`)
 
-1. First launch: the button, the instruction and zeroed stats.
-2. A run around 12 presses with a "concern" reaction.
-3. Press-down state (shows the depth change).
-4. Milestone moment (for example 25).
-5. Large personal best and total.
-6. Share sheet over the achievement card.
+Eight 1320×2868 PNGs (iPhone 6.9"), built by `Scripts/make_store_screenshots.py` from **unedited iOS Simulator
+captures taken by the CI UI tests** (`ScreenshotTests`) and the app's own rendered share card. Nothing on screen is
+mocked up. Order: 1 hook, 2 reactions, 3 unlocks/milestones, 4 escalation, 5 collection, 6 button style, 7 share card, 8 private/offline.
+Upload them to the 6.9" slot in App Store Connect; Apple scales them for smaller iPhones. The headlines are marketing
+copy and the screens are real. Re-run the CI workflow and the script after any UI change so they stay accurate (2.3.3).
+No iPad screenshots are needed (iPhone-only).
 
 ## Privacy declaration (derived from the code)
 
