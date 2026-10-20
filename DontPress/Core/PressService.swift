@@ -19,6 +19,8 @@ final class PressService {
 
     var savedThemeID: String? { store.loadThemeID() }
     func saveThemeID(_ id: String) { store.saveThemeID(id) }
+    var savedIsPro: Bool { store.loadIsPro() }
+    func saveIsPro(_ value: Bool) { store.saveIsPro(value) }
 
     @discardableResult
     func registerPress() -> PressResult {

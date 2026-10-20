@@ -108,10 +108,10 @@ final class DontPressUITests: XCTestCase {
         let classic = app.buttons["theme-classic"]
         XCTAssertTrue(classic.waitForExistence(timeout: 5))
         XCTAssertEqual(classic.value as? String, "Selected")
-        XCTAssertTrue(app.buttons["theme-cobalt"].isEnabled, "best 60 unlocks Blue Mistake")
-        XCTAssertTrue(app.buttons["theme-stealth"].isEnabled, "best 60 unlocks Stealth")
-        XCTAssertFalse(app.buttons["theme-gold"].isEnabled, "total 80 keeps Gold locked")
-        XCTAssertFalse(app.buttons["theme-radioactive"].isEnabled, "best 60 keeps Radioactive locked")
+        XCTAssertFalse((app.buttons["theme-cobalt"].value as? String ?? "").hasPrefix("Locked"), "best 60 unlocks Blue Mistake")
+        XCTAssertFalse((app.buttons["theme-stealth"].value as? String ?? "").hasPrefix("Locked"), "best 60 unlocks Stealth")
+        XCTAssertTrue((app.buttons["theme-gold"].value as? String ?? "").hasPrefix("Locked"), "total 80 keeps Gold locked")
+        XCTAssertTrue((app.buttons["theme-radioactive"].value as? String ?? "").hasPrefix("Locked"), "best 60 keeps Radioactive locked")
 
         app.buttons["theme-cobalt"].tap()
         XCTAssertEqual(app.buttons["theme-cobalt"].value as? String, "Selected")
@@ -123,6 +123,23 @@ final class DontPressUITests: XCTestCase {
         XCTAssertTrue(again.buttons["collectionButton"].waitForExistence(timeout: 5))
         again.buttons["collectionButton"].tap()
         XCTAssertEqual(again.buttons["theme-cobalt"].value as? String, "Selected")
+    }
+
+    func testLockedStyleOpensProOfferWithRestoreAndSelectionIsUnchanged() {
+        let app = launch(extra: ["-UITestSeedBest", "5", "-UITestSeedTotal", "5"])
+        XCTAssertTrue(app.buttons["collectionButton"].waitForExistence(timeout: 5))
+        app.buttons["collectionButton"].tap()
+        XCTAssertTrue(app.buttons["theme-gold"].waitForExistence(timeout: 5))
+        app.buttons["theme-gold"].tap()
+
+        // The offer is user-initiated and always offers a way to restore.
+        XCTAssertTrue(app.buttons["proRestore"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["proBuy"].exists)
+        app.buttons["proClose"].tap()
+
+        XCTAssertTrue(app.buttons["theme-classic"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.buttons["theme-classic"].value as? String, "Selected", "a locked style is never selected")
+        XCTAssertTrue((app.buttons["theme-gold"].value as? String ?? "").hasPrefix("Locked"))
     }
 
     func testUnlockBannerAppearsOnFirstPress() {

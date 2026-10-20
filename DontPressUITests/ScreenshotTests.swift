@@ -51,6 +51,11 @@ final class ScreenshotTests: XCTestCase {
         app.buttons["collectionButton"].tap()
         XCTAssertTrue(app.buttons["theme-gold"].waitForExistence(timeout: 5))
         shot(app, "09-collection")
+        app.buttons["theme-radioactive"].tap()      // locked at best 120: opens the Pro offer
+        XCTAssertTrue(app.buttons["proRestore"].waitForExistence(timeout: 5))
+        shot(app, "12-pro-offer")
+        app.buttons["proClose"].tap()
+        XCTAssertTrue(app.buttons["theme-gold"].waitForExistence(timeout: 5))
         app.buttons["theme-gold"].tap()
         app.buttons["collectionDone"].tap()
         XCTAssertTrue(app.buttons["pressButton"].waitForExistence(timeout: 5))

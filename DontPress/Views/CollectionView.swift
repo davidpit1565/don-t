@@ -3,7 +3,9 @@ import SwiftUI
 /// Button styles and achievements. Everything is local and derived from the saved stats.
 struct CollectionView: View {
     @Bindable var model: HomeViewModel
+    @Bindable var proStore: ProStore
     @Environment(\.dismiss) private var dismiss
+    @State private var showPro = false
 
     var body: some View {
         NavigationStack {
@@ -23,6 +25,12 @@ struct CollectionView: View {
                 } header: {
                     Text("Achievements · \(model.unlockedAchievementCount) of \(Achievement.all.count)")
                 }
+
+                Section {
+                    proRow
+                } header: {
+                    Text("Pro")
+                }
             }
             .scrollContentBackground(.hidden)
             .background(DS.Palette.background.ignoresSafeArea())
@@ -36,11 +44,33 @@ struct CollectionView: View {
             }
         }
         .preferredColorScheme(.dark)
+        .sheet(isPresented: $showPro) { ProView(proStore: proStore) }
+    }
+
+    private var proRow: some View {
+        Button { showPro = true } label: {
+            HStack(spacing: DS.Spacing.m) {
+                Image(systemName: model.isPro ? "checkmark.seal.fill" : "sparkles")
+                    .font(.title3)
+                    .foregroundStyle(DS.Palette.highlight)
+                    .frame(width: 40)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("DON'T PRESS Pro").font(.body.weight(.semibold)).foregroundStyle(DS.Palette.textPrimary)
+                    Text(model.isPro ? "Unlocked. Thank you!" : "Unlock all button styles right away")
+                        .font(.footnote).foregroundStyle(DS.Palette.textSecondary)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").font(.footnote).foregroundStyle(DS.Palette.textSecondary)
+            }
+            .frame(minHeight: 44)
+        }
+        .listRowBackground(DS.Palette.surface)
+        .accessibilityIdentifier("proRow")
     }
 
     private func themeRow(_ status: ThemeStatus) -> some View {
         Button {
-            model.selectTheme(status.theme)
+            if status.isUnlocked { model.selectTheme(status.theme) } else { showPro = true }
         } label: {
             HStack(spacing: DS.Spacing.m) {
                 status.theme.swatch
@@ -51,7 +81,7 @@ struct CollectionView: View {
                         .font(.body.weight(.semibold))
                         .foregroundStyle(status.isUnlocked ? DS.Palette.textPrimary : DS.Palette.textSecondary)
                     if !status.isUnlocked {
-                        Text(status.theme.rule.requirementText)
+                        Text("\(status.theme.rule.requirementText), or unlock with Pro")
                             .font(.footnote)
                             .foregroundStyle(DS.Palette.textSecondary)
                     }
@@ -68,11 +98,10 @@ struct CollectionView: View {
         .listRowBackground(DS.Palette.surface)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(status.theme.name)
-        .accessibilityValue(status.isSelected ? "Selected" : status.isUnlocked ? "Unlocked" : "Locked. \(status.theme.rule.requirementText)")
+        .accessibilityValue(status.isSelected ? "Selected" : status.isUnlocked ? "Unlocked" : "Locked. \(status.theme.rule.requirementText), or unlock with Pro")
+        .accessibilityHint(status.isUnlocked ? "" : "Opens the Pro offer")
         .accessibilityAddTraits(status.isSelected ? [.isButton, .isSelected] : .isButton)
         .accessibilityIdentifier("theme-\(status.theme.id)")
-        // Applied last so the combined accessibility element is dimmed/disabled too.
-        .disabled(!status.isUnlocked)
     }
 
     private func achievementRow(_ status: AchievementStatus) -> some View {

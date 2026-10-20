@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @Bindable var model: HomeViewModel
+    var proStore: ProStore
     @State private var isSharing = false
     @State private var shareError = false
     @State private var showCollection = false
@@ -30,7 +31,7 @@ struct HomeView: View {
             .scrollBounceBehavior(.basedOnSize)
         }
         .overlay(alignment: .top) { unlockBanner }
-        .sheet(isPresented: $showCollection) { CollectionView(model: model) }
+        .sheet(isPresented: $showCollection) { CollectionView(model: model, proStore: proStore) }
         .background(DS.Palette.background.ignoresSafeArea())
         .preferredColorScheme(.dark)
         .alert("Couldn't make the image", isPresented: $shareError) {

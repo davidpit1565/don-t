@@ -12,6 +12,9 @@ protocol StatsStoring: AnyObject {
     /// The chosen button style id, if any.
     func loadThemeID() -> String?
     func saveThemeID(_ id: String)
+    /// Last known Pro entitlement (StoreKit stays the source of truth; this avoids a flicker at launch).
+    func loadIsPro() -> Bool
+    func saveIsPro(_ value: Bool)
 }
 
 /// Lightweight local store. Missing, negative, or wrongly typed values read as 0.
@@ -19,6 +22,7 @@ final class UserDefaultsStatsStore: StatsStoring {
     static let bestKey = "dontpress.personalBest"
     static let totalKey = "dontpress.totalPresses"
     static let themeKey = "dontpress.buttonTheme"
+    static let proKey = "dontpress.isPro"
 
     private let defaults: UserDefaults
 
@@ -40,6 +44,8 @@ final class UserDefaultsStatsStore: StatsStoring {
 
     func loadThemeID() -> String? { defaults.object(forKey: Self.themeKey) as? String }
     func saveThemeID(_ id: String) { defaults.set(id, forKey: Self.themeKey) }
+    func loadIsPro() -> Bool { (defaults.object(forKey: Self.proKey) as? Bool) ?? false }
+    func saveIsPro(_ value: Bool) { defaults.set(value, forKey: Self.proKey) }
 
     private func readCounter(_ key: String) -> Int {
         guard let raw = defaults.object(forKey: key) else { return 0 }
@@ -52,6 +58,7 @@ final class UserDefaultsStatsStore: StatsStoring {
 final class InMemoryStatsStore: StatsStoring {
     private var stats: PersistedStats
     private var themeID: String?
+    private var isPro = false
 
     init(_ stats: PersistedStats = PersistedStats(), themeID: String? = nil) {
         self.stats = stats
@@ -60,6 +67,8 @@ final class InMemoryStatsStore: StatsStoring {
 
     func loadThemeID() -> String? { themeID }
     func saveThemeID(_ id: String) { themeID = id }
+    func loadIsPro() -> Bool { isPro }
+    func saveIsPro(_ value: Bool) { isPro = value }
 
     func load() -> PersistedStats { stats }
     func save(_ stats: PersistedStats) { self.stats = stats }
