@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import LinkPresentation
 
 /// Presents the native share sheet with an actual image.
 enum SharePresenter {
@@ -43,6 +44,13 @@ private final class ShareItem: NSObject, UIActivityItemSource {
     func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any { image }
 
     func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? { image }
+
+    func activityViewControllerLinkMetadata(_ activityViewController: UIActivityViewController) -> LPLinkMetadata? {
+        let metadata = LPLinkMetadata()
+        metadata.title = "DON'T PRESS: my personal best"
+        metadata.imageProvider = NSItemProvider(object: image)
+        return metadata
+    }
 
     func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivity.ActivityType?) -> String { "DON'T PRESS" }
 }

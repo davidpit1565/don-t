@@ -30,6 +30,13 @@ final class ScreenshotTests: XCTestCase {
         for _ in 0..<13 { button.tap() }   // 25th press crosses a milestone
         shot(app, "03-milestone-25")
 
+        for _ in 0..<15 { button.tap() }   // 40
+        shot(app, "03b-run-40")
+        for _ in 0..<35 { button.tap() }   // 75
+        shot(app, "03c-run-75")
+        for _ in 0..<35 { button.tap() }   // 110
+        shot(app, "03d-run-110")
+
         app.buttons["shareButton"].tap()
         sleep(3)
         shot(app, "04-share-sheet")

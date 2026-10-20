@@ -9,6 +9,11 @@ struct StatTile: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    /// Full grouping up to 999,999,999; compact beyond that so it never truncates on narrow tiles.
+    private var displayText: String {
+        value >= 1_000_000_000 ? value.formatted(.number.notation(.compactName)) : value.formatted()
+    }
+
     var body: some View {
         VStack(spacing: DS.Spacing.xs) {
             Text(title)
@@ -17,7 +22,7 @@ struct StatTile: View {
                 .foregroundStyle(DS.Palette.textSecondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
-            Text(value.formatted())
+            Text(displayText)
                 .font(.title2.weight(.bold).monospacedDigit())
                 .foregroundStyle(emphasized ? DS.Palette.highlight : DS.Palette.textPrimary)
                 .lineLimit(1)
