@@ -15,6 +15,7 @@ counts, buzzes, and earns a hand-written reaction. Fully local and offline, with
 - 100+ curated reactions in six press-count tiers, plus milestone lines (10, 25, 50, 100, 250, 500, 1000). No immediate repeats.
 - **Current run** (this app session), **personal best** and **total presses** (persisted in `UserDefaults`).
 - Share a rendered 1080×1350 achievement card (SwiftUI `ImageRenderer`) through the system share sheet.
+- **Collection:** 12 local achievements and 5 button styles (Classic + 4 unlockable) derived from the saved stats; unlock banner.
 - Accessibility labels/values/hints, Dynamic Type (stats stack at accessibility sizes), dark-mode-first UI.
 
 ### Session semantics

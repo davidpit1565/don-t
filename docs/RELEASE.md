@@ -63,6 +63,7 @@ or Open (needs the owner, a Mac, or Apple tooling).
   >
   > • Tactile button with real haptics
   > • 100+ hand-written reactions that escalate the longer you ignore the warnings
+  > • 12 achievements and 5 button styles (Classic, Blue Mistake, Stealth, Radioactive, Gold Standard) that unlock as you go
   > • Current run, personal best and total presses
   > • Shareable achievement image through the standard iOS share sheet
   > • Works fully offline. No account, no ads, no tracking.
@@ -106,3 +107,18 @@ or Open (needs the owner, a Mac, or Apple tooling).
 - [ ] Real-device haptics check
 - [ ] Share to Photos/Messages; cancel from the share sheet; confirm stats unchanged
 - [ ] Archive, validate, and upload through Xcode Organizer (**only with the owner's explicit go-ahead**)
+
+
+## App Review Notes (paste into App Store Connect → App Review Information → Notes)
+
+> DON'T PRESS is a fully offline, single-player toy. There is no login, no account, no network access and no in-app purchase, so no demo account is needed.
+>
+> How to see everything in about a minute:
+> 1. Tap the big red button. Each press increments Current Run and Total Presses, plays a light haptic and shows a different hand-written reaction (100+ lines in six tiers that escalate as the run grows).
+> 2. Keep tapping: at 10, 25, 50, 100, 250, 500 and 1,000 presses a milestone line and a stronger haptic fire once. Achievements (12) and button styles (5) unlock as thresholds are reached; a banner announces each unlock.
+> 3. Tap the trophy icon (top right) to open Collection: choose an unlocked button style and see locked ones with their requirements and progress.
+> 4. Tap "Share personal best" (enabled after the first press) to render a portrait achievement card with the user's real number and open the standard iOS share sheet.
+>
+> Current Run starts at zero on every cold launch by design; Personal Best and Total Presses are stored locally (UserDefaults). The app collects no data. Privacy Policy and Support pages are linked at the bottom of the main screen.
+
+**Reviewer-friendly framing (keep it accurate):** do not claim leaderboards, sync, or social features; none exist.

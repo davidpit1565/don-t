@@ -21,6 +21,9 @@ Every press you have ever made on this device, across all sessions.
 **Why is the Share button greyed out?**
 There is nothing to share until you have pressed at least once.
 
+**How do I unlock button styles and achievements?**
+Tap the trophy icon at the top right of the main screen. Locked items show what you need to do and your progress. Styles unlock at: Blue Mistake (run of 10), Stealth (run of 50), Radioactive (run of 250), Gold Standard (500 total presses).
+
 **Is my score online or ranked against other people?**
 No. Everything stays on your device. The app has no accounts, leaderboard, or server.
 
