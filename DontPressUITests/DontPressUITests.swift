@@ -34,12 +34,12 @@ final class DontPressUITests: XCTestCase {
         let app = launch()
         let button = app.buttons["pressButton"]
         XCTAssertTrue(button.waitForExistence(timeout: 5))
-        let before = app.staticTexts["reactionLabel"].label
+        let before = app.staticTexts["reactionLabel"].firstMatch.label
         button.tap()
         XCTAssertEqual(value(app, "currentRun"), "1")
         XCTAssertEqual(value(app, "personalBest").prefix(1), "1")
         XCTAssertEqual(value(app, "totalPresses"), "1")
-        XCTAssertNotEqual(app.staticTexts["reactionLabel"].label, before)
+        XCTAssertNotEqual(app.staticTexts["reactionLabel"].firstMatch.label, before)
     }
 
     func testRapidTappingCountsEveryTap() {
@@ -86,11 +86,12 @@ final class DontPressUITests: XCTestCase {
         XCTAssertTrue(share.isEnabled)
         share.tap()
 
+        // The share sheet is system UI; match its known container or its Close control.
         let sheet = app.otherElements["ActivityListView"]
-        XCTAssertTrue(sheet.waitForExistence(timeout: 10), "system share sheet should appear")
+        let close = app.buttons["Close"]
+        XCTAssertTrue(sheet.waitForExistence(timeout: 10) || close.waitForExistence(timeout: 2), "system share sheet should appear")
 
         // Dismiss without sharing (the Close control is localized; fall back to tapping above the sheet).
-        let close = app.buttons["Close"]
         if close.exists { close.tap() } else { app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap() }
         XCTAssertTrue(app.buttons["pressButton"].waitForExistence(timeout: 5))
 

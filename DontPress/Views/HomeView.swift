@@ -74,10 +74,11 @@ struct HomeView: View {
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity, minHeight: 60, alignment: .top)
             .fixedSize(horizontal: false, vertical: true)
-            .id(model.reactionText)
-            .transition(.opacity)
+            .contentTransition(.opacity)
             .animation(.easeOut(duration: 0.12), value: model.reactionText)
-            .accessibilityAddTraits(.updatesFrequently)
+            .onChange(of: model.reactionText) { _, newValue in
+                AccessibilityNotification.Announcement(newValue).post()
+            }
             .accessibilityIdentifier("reactionLabel")
     }
 
