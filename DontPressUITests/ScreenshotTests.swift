@@ -5,6 +5,7 @@ final class ScreenshotTests: XCTestCase {
     override func setUp() { continueAfterFailure = false }
 
     private func shot(_ app: XCUIApplication, _ name: String) {
+        Thread.sleep(forTimeInterval: 0.8)   // let number/banner animations settle
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = name
         attachment.lifetime = .keepAlways
