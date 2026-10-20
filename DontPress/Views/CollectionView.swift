@@ -65,13 +65,14 @@ struct CollectionView: View {
             }
             .frame(minHeight: 44)
         }
-        .disabled(!status.isUnlocked)
         .listRowBackground(DS.Palette.surface)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(status.theme.name)
         .accessibilityValue(status.isSelected ? "Selected" : status.isUnlocked ? "Unlocked" : "Locked. \(status.theme.rule.requirementText)")
         .accessibilityAddTraits(status.isSelected ? [.isButton, .isSelected] : .isButton)
         .accessibilityIdentifier("theme-\(status.theme.id)")
+        // Applied last so the combined accessibility element is dimmed/disabled too.
+        .disabled(!status.isUnlocked)
     }
 
     private func achievementRow(_ status: AchievementStatus) -> some View {
