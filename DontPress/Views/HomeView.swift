@@ -54,7 +54,7 @@ struct HomeView: View {
     }
 
     private func pressButton(available: CGSize) -> some View {
-        let base = min(available.width - DS.Spacing.l * 2, available.height * 0.42, 340)
+        let base = min(available.width - DS.Spacing.l * 2, available.height * 0.38, 340)
         let diameter = max(base, 180)
         return Button {
             model.press()
@@ -64,8 +64,14 @@ struct HomeView: View {
         .buttonStyle(PlungerButtonStyle(diameter: diameter))
         .accessibilityLabel("Don't press")
         .accessibilityHint("Double tap to press it anyway. Adds one to your run.")
-        .accessibilityValue("Current run \(model.stats.currentRun.formatted())")
+        .accessibilityValue(buttonAccessibilityValue)
         .accessibilityIdentifier("pressButton")
+    }
+
+    /// VoiceOver reads this after activation, so the reaction is heard without extra announcements.
+    private var buttonAccessibilityValue: String {
+        let run = "Current run \(model.stats.currentRun.formatted())"
+        return model.stats.currentRun == 0 ? run : "\(run). \(model.reactionText)"
     }
 
     private var reactionLine: some View {
@@ -77,9 +83,6 @@ struct HomeView: View {
             .fixedSize(horizontal: false, vertical: true)
             .contentTransition(.opacity)
             .animation(.easeOut(duration: 0.12), value: model.reactionText)
-            .onChange(of: model.reactionText) { _, newValue in
-                AccessibilityNotification.Announcement(newValue).post()
-            }
             .accessibilityIdentifier("reactionLabel")
     }
 
@@ -121,13 +124,14 @@ struct HomeView: View {
     private var legalLinks: some View {
         HStack(spacing: DS.Spacing.l) {
             Link("Privacy", destination: AppLinks.privacyPolicy)
+                .frame(minWidth: 64, minHeight: 44)
                 .accessibilityIdentifier("privacyLink")
             Link("Support", destination: AppLinks.support)
+                .frame(minWidth: 64, minHeight: 44)
                 .accessibilityIdentifier("supportLink")
         }
         .font(.footnote)
         .foregroundStyle(DS.Palette.textSecondary)
-        .frame(minHeight: 44)
     }
 
     // MARK: Sharing
@@ -140,8 +144,12 @@ struct HomeView: View {
             shareError = true
             return
         }
-        SharePresenter.present(image: image) {
+        let presented = SharePresenter.present(image: image) {
             isSharing = false   // completed or cancelled: statistics are never touched
+        }
+        if !presented {
+            isSharing = false
+            shareError = true
         }
     }
 }

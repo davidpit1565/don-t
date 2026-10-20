@@ -23,7 +23,7 @@ These numbers are not linked to your identity. The app has no accounts and does 
 When you tap **Share personal best**, the app creates an image on your device and opens the standard iOS share sheet. The image goes only where *you* choose to send it. The developer never receives it.
 
 ## Retention and deletion
-The two stored numbers stay on your device until you delete the app, which removes them. The developer has no copy.
+The two stored numbers stay on your device until you delete the app, which removes them from the device. The developer has no copy and no access. If you use iPhone or iCloud device backups, the app's local data may be included in your own backup, which is controlled by you and Apple, not by the developer.
 
 ## Children
 The app collects no data from anyone, including children.

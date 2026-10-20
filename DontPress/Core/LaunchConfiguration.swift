@@ -16,10 +16,13 @@ struct LaunchConfiguration: Equatable {
             guard let index = arguments.firstIndex(of: flag), index + 1 < arguments.count else { return nil }
             return arguments[index + 1]
         }
+        // Test hooks exist only in debug builds; a release app always uses the real store.
+        #if DEBUG
         isUITestMode = arguments.contains("-UITestMode")
         resetStore = arguments.contains("-UITestReset")
         seedBest = value(after: "-UITestSeedBest").flatMap { Int($0) }
         seedTotal = value(after: "-UITestSeedTotal").flatMap { Int($0) }
+        #endif
     }
 
     func makeStore() -> StatsStoring {

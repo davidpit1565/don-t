@@ -25,7 +25,7 @@ There is nothing to share until you have pressed at least once.
 No. Everything stays on your device. The app has no accounts, leaderboard, or server.
 
 **Do I lose my numbers if I delete the app?**
-Yes. They are stored only on your device. There is no backup or sync.
+Deleting the app removes them from your device. The app has no account, sync or cloud service of its own. If you use iPhone or iCloud device backups, the numbers can be restored along with the rest of the app's data when you restore a backup.
 
 **The button does not vibrate.**
 Haptics need an iPhone with a Taptic Engine, and "System Haptics" must be on in Settings → Sounds & Haptics. The app works the same without them.

@@ -70,6 +70,18 @@ final class HomeViewModelTests: XCTestCase {
         }
     }
 
+    func testTyingAnOlderBestIsNotANewPersonalBest() {
+        onMain {
+            let model = makeModel(store: InMemoryStatsStore(PersistedStats(personalBest: 2, totalPresses: 2)))
+            model.press()
+            model.press()   // ties the stored best of 2
+            XCTAssertFalse(model.isAtPersonalBest)
+            model.press()   // 3 beats it
+            XCTAssertTrue(model.isAtPersonalBest)
+            XCTAssertEqual(model.stats.personalBest, 3)
+        }
+    }
+
     func testReadingShareContentDoesNotChangeStats() {
         onMain {
             let model = makeModel()

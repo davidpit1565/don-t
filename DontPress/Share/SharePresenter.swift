@@ -5,11 +5,9 @@ import LinkPresentation
 /// Presents the native share sheet with an actual image.
 enum SharePresenter {
     @MainActor
-    static func present(image: UIImage, onFinish: @escaping () -> Void) {
-        guard let presenter = topViewController() else {
-            onFinish()
-            return
-        }
+    @discardableResult
+    static func present(image: UIImage, onFinish: @escaping () -> Void) -> Bool {
+        guard let presenter = topViewController() else { return false }
         let controller = UIActivityViewController(activityItems: [ShareItem(image: image)], applicationActivities: nil)
         controller.completionWithItemsHandler = { _, _, _, _ in
             onFinish()   // fires for both completion and cancellation
@@ -20,6 +18,7 @@ enum SharePresenter {
             popover.permittedArrowDirections = []
         }
         presenter.present(controller, animated: true)
+        return true
     }
 
     @MainActor

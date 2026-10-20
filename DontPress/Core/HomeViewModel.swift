@@ -7,7 +7,7 @@ import Observation
 final class HomeViewModel {
     private(set) var stats: PressStats
     private(set) var reactionText: String
-    /// True while the current run equals the personal best (and is above zero).
+    /// True once this run has set a new personal best (a tie with an older best does not count).
     private(set) var isAtPersonalBest = false
     /// Increments once per accepted press; views may key light animation on it.
     private(set) var pressCount = 0
@@ -30,7 +30,8 @@ final class HomeViewModel {
     func press() {
         let result = service.registerPress()
         stats = result.stats
-        isAtPersonalBest = result.stats.currentRun > 0 && result.stats.currentRun == result.stats.personalBest
+        // Only a press that actually raised the best counts; merely tying an older best does not.
+        if result.isNewPersonalBest { isAtPersonalBest = true }
         pressCount &+= 1
 
         if let milestone = result.milestone {
