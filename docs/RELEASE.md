@@ -9,7 +9,7 @@ or Open (needs the owner, a Mac, or Apple tooling).
 | Item | Value |
 | --- | --- |
 | Display name | DON'T PRESS (`INFOPLIST_KEY_CFBundleDisplayName`) |
-| Bundle ID | `com.example.dontpress`, a **placeholder**. Tests use `.tests` / `.uitests` suffixes. |
+| Bundle ID | `com.davidpitchkhadze.dontpress` (chosen for the owner; tests use `.tests` / `.uitests`). It cannot be changed after the App Store Connect record is created. |
 | Version / build | 1.0 / 1 (`MARKETING_VERSION`, `CURRENT_PROJECT_VERSION`) |
 | Deployment target | iOS 17.0, iPhone only (`TARGETED_DEVICE_FAMILY = 1`), portrait, dark appearance forced |
 | Signing | Automatic; `DEVELOPMENT_TEAM` is empty. **No team or credentials were invented.** |
@@ -20,7 +20,7 @@ or Open (needs the owner, a Mac, or Apple tooling).
 
 ## Blockers before submission (Open)
 
-1. Set your real **bundle ID** and **development team** in Xcode (Signing & Capabilities).
+1. Select your **development team** in Xcode (Signing & Capabilities); confirm you are happy with the bundle ID before creating the App Store Connect record.
 2. **Build, run, and test on a Mac.** No Xcode build has been performed on this project yet.
 3. **Privacy policy and support pages** are written (`docs/privacy.md`, `docs/support.md`, contact: David Pitchkhadze,
    davidpit2008@gmail.com) and linked inside the app (`AppLinks.swift`). The links point to

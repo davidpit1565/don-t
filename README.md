@@ -43,7 +43,7 @@ docs/RELEASE.md
 
 ```sh
 open DontPress.xcodeproj          # select scheme "DontPress", run on an iPhone simulator
-# set your Team and bundle identifier first: Signing & Capabilities (currently the placeholder com.example.dontpress)
+# select your Team first: Signing & Capabilities (bundle ID: com.davidpitchkhadze.dontpress)
 
 xcodebuild test -project DontPress.xcodeproj -scheme DontPress \
   -destination 'platform=iOS Simulator,name=iPhone 16'

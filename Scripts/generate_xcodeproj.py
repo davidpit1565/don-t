@@ -25,7 +25,7 @@ T_DEBUG, T_RELEASE = i(64), i(65)
 U_DEBUG, U_RELEASE = i(66), i(67)
 T_DEP, U_DEP, T_PROXY, U_PROXY = i(70), i(71), i(72), i(73)
 
-BUNDLE_ID = "com.example.dontpress"   # PLACEHOLDER: replace with your own reverse-DNS identifier
+BUNDLE_ID = "com.davidpitchkhadze.dontpress"   # chosen for the owner; cannot be changed after the app record is created in App Store Connect
 
 def settings(d):
     return "\n".join(f"\t\t\t\t{k} = {v};" for k, v in d.items())
