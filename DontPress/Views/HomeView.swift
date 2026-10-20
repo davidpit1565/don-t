@@ -18,6 +18,7 @@ struct HomeView: View {
                     Spacer(minLength: 0)
                     stats
                     shareButton
+                    legalLinks
                 }
                 .padding(.horizontal, DS.Spacing.l)
                 .padding(.vertical, DS.Spacing.m)
@@ -115,6 +116,18 @@ struct HomeView: View {
         .disabled(model.shareContent == nil)
         .accessibilityHint(model.shareContent == nil ? "Press the button at least once to unlock sharing." : "Opens the share sheet with an image of your personal best.")
         .accessibilityIdentifier("shareButton")
+    }
+
+    private var legalLinks: some View {
+        HStack(spacing: DS.Spacing.l) {
+            Link("Privacy", destination: AppLinks.privacyPolicy)
+                .accessibilityIdentifier("privacyLink")
+            Link("Support", destination: AppLinks.support)
+                .accessibilityIdentifier("supportLink")
+        }
+        .font(.footnote)
+        .foregroundStyle(DS.Palette.textSecondary)
+        .frame(minHeight: 44)
     }
 
     // MARK: Sharing

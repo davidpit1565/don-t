@@ -22,9 +22,11 @@ or Open (needs the owner, a Mac, or Apple tooling).
 
 1. Set your real **bundle ID** and **development team** in Xcode (Signing & Capabilities).
 2. **Build, run, and test on a Mac.** No Xcode build has been performed on this project yet.
-3. Host a **privacy policy** and a **support page**. No URL has been invented. Guideline 5.1.1(i) also
-   asks for the privacy policy to be linked **inside the app**, so add a link (for example a small "Privacy" row)
-   once the real URL exists.
+3. **Privacy policy and support pages** are written (`docs/privacy.md`, `docs/support.md`, contact: David Pitchkhadze,
+   davidpit2008@gmail.com) and linked inside the app (`AppLinks.swift`). The links point to
+   `https://github.com/davidpit1565/don-t/blob/main/docs/...`, which **only resolves after this branch is merged to `main`**
+   (the repository must stay public). Use those same URLs in App Store Connect, or enable GitHub Pages and update `AppLinks.swift`
+   and the metadata together. Confirm both pages open in a logged-out browser before submitting.
 4. Confirm the app name is available in App Store Connect and does not collide with an existing product (4.1, 2.3.7; the limit is 30 characters, and "DON'T PRESS" is 11).
 5. Capture real screenshots from a simulator or device (2.3.3).
 6. Answer the age-rating questionnaire in App Store Connect (expected to be 4+; confirm there).
@@ -88,14 +90,14 @@ or Open (needs the owner, a Mac, or Apple tooling).
 - [ ] States that no personal data is collected or transmitted
 - [ ] States that the two counters are stored on the device only and are removed when the app is deleted
 - [ ] Mentions the share sheet: the image goes only where the user sends it
-- [ ] Contact route for questions
-- [ ] Hosted at a stable public URL; linked in App Store Connect **and** inside the app
+- [x] Contact route for questions (written in `docs/privacy.md`)
+- [ ] Hosted at a stable public URL (after merge to `main`); linked in App Store Connect **and** inside the app (in-app link is implemented, unverified)
 
 ## Support page checklist
 
-- [ ] Contact email or form
-- [ ] Short FAQ (what counts as a run, why the run resets on relaunch, how sharing works)
-- [ ] Hosted at a stable public URL
+- [x] Contact email (written in `docs/support.md`)
+- [x] Short FAQ (written)
+- [ ] Hosted at a stable public URL (after merge to `main`)
 
 ## Verification checklist before upload
 

@@ -7,6 +7,7 @@ counts, buzzes, and earns a hand-written reaction. Fully local and offline, with
 
 - **Spec:** [`CLAUDE.md`](./CLAUDE.md)
 - **Release notes and App Store checklist:** [`docs/RELEASE.md`](./docs/RELEASE.md)
+- **Privacy policy:** [`docs/privacy.md`](./docs/privacy.md) · **Support:** [`docs/support.md`](./docs/support.md)
 
 ## Features
 
