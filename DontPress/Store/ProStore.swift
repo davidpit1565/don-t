@@ -1,5 +1,5 @@
 import StoreKit
-import SwiftUI
+import Observation
 
 /// StoreKit 2 wrapper for the single non-consumable "Pro" purchase.
 /// Entitlements always come from StoreKit; the app only caches the last known value.
