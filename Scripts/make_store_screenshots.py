@@ -33,14 +33,19 @@ def canvas(glow_y=0.62, glow=(120, 10, 28)):
 def headline(img, lines, sub, top=190):
     d = ImageDraw.Draw(img)
     y = top
-    f = font("ExtraBold", 168)
+    # one font size per slide, shrunk just enough that the widest line fits the margins
+    size = 168
+    widest = max(sum(d.textlength(t, font=font("ExtraBold", size)) for t, _ in segs) for segs in lines)
+    if widest > W - 150:
+        size = int(size * (W - 150) / widest)
+    f = font("ExtraBold", size)
     for segs in lines:
         total = sum(d.textlength(t, font=f) for t, _ in segs)
         x = (W - total) / 2
         for t, col in segs:
             d.text((x, y), t, font=f, fill=col)
             x += d.textlength(t, font=f)
-        y += 178
+        y += int(size * 1.06)
     f2 = font("Medium", 56)
     # wrap sub to two lines max
     words, line, rows = sub.split(), "", []
@@ -96,24 +101,28 @@ slide_phone("01-dont.png", [[Wt("Whatever you do,")], [R("don't.")]],
             "One button. One rule. Zero self-control.", pick("01-launch"))
 slide_phone("02-opinions.png", [[Wt("It has")], [R("opinions.")]],
             "100+ hand-written reactions, judging every single press.", pick("02-run-12"))
-slide_phone("03-milestones.png", [[Wt("Level up your")], [R("bad decisions.")]],
-            "Milestones at 10, 25, 50, 100 and beyond.", pick("03-milestone-25"))
+slide_phone("03-levelup.png", [[Wt("Level up your")], [R("bad decisions.")]],
+            "Milestones and achievements unlock as you go.", pick("02a-unlock-10", "03-milestone-25"))
 slide_phone("04-worse.png", [[Wt("It only gets")], [R("worse.")]],
             "Keep going. The reactions get stranger.", pick("03d-run-110", "03c-run-75", "03b-run-40"))
+slide_phone("05-collect.png", [[Wt("Collect your")], [R("regrets.")]],
+            "12 achievements. 5 button styles.", pick("09-collection"))
+slide_phone("06-style.png", [[Wt("Make it")], [R("yours.")]],
+            "Unlock new button styles as you press.", pick("10-theme-gold"))
 
 # 05: the app's own rendered share card
 img = canvas(glow_y=0.6)
 y = headline(img, [[Wt("Share your")], [R("shame.")]], "A clean achievement card, one tap away.")
 card = pick("07-share-card-847")
-cw = 1000
+cw = 1130
 c = card.resize((cw, int(card.height * cw / card.width)), Image.LANCZOS)
 sh = Image.new("RGBA", img.size, (0, 0, 0, 0))
-cx = (W - cw) // 2; cy = y + 90
+cx = (W - cw) // 2; cy = y + max(60, (H - y - c.height) // 2)
 ImageDraw.Draw(sh).rounded_rectangle([cx, cy + 40, cx + cw, cy + c.height + 40], 56, fill=(0, 0, 0, 210))
 img = Image.alpha_composite(img.convert("RGBA"), sh.filter(ImageFilter.GaussianBlur(50))).convert("RGB")
 img.paste(rounded(c, 56), (cx, cy), rounded(c, 56))
 ImageDraw.Draw(img).rounded_rectangle([cx, cy, cx + cw, cy + c.height], 56, outline=(58, 58, 66), width=3)
-save(img, "05-share.png")
+save(img, "07-share.png")
 
-slide_phone("06-private.png", [[Wt("No ads. No accounts.")], [R("No excuses.")]],
+slide_phone("08-private.png", [[Wt("No ads. No accounts.")], [R("No excuses.")]],
             "Works offline. Nothing leaves your phone.", pick("03b-run-40", "02-run-12"))
