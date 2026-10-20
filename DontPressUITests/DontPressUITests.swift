@@ -100,6 +100,40 @@ final class DontPressUITests: XCTestCase {
         XCTAssertTrue(value(app, "totalPresses").hasPrefix("2"))
     }
 
+    func testCollectionShowsLockedAndUnlockedStylesAndSelectionSticks() {
+        let app = launch(extra: ["-UITestSeedBest", "60", "-UITestSeedTotal", "80"])
+        XCTAssertTrue(app.buttons["collectionButton"].waitForExistence(timeout: 5))
+        app.buttons["collectionButton"].tap()
+
+        let classic = app.buttons["theme-classic"]
+        XCTAssertTrue(classic.waitForExistence(timeout: 5))
+        XCTAssertEqual(classic.value as? String, "Selected")
+        XCTAssertTrue(app.buttons["theme-cobalt"].isEnabled, "best 60 unlocks Blue Mistake")
+        XCTAssertTrue(app.buttons["theme-stealth"].isEnabled, "best 60 unlocks Stealth")
+        XCTAssertFalse(app.buttons["theme-gold"].isEnabled, "total 80 keeps Gold locked")
+        XCTAssertFalse(app.buttons["theme-radioactive"].isEnabled, "best 60 keeps Radioactive locked")
+
+        app.buttons["theme-cobalt"].tap()
+        XCTAssertEqual(app.buttons["theme-cobalt"].value as? String, "Selected")
+        app.buttons["collectionDone"].tap()
+
+        // relaunch without reset: the choice persists
+        app.terminate()
+        let again = launch(reset: false)
+        XCTAssertTrue(again.buttons["collectionButton"].waitForExistence(timeout: 5))
+        again.buttons["collectionButton"].tap()
+        XCTAssertEqual(again.buttons["theme-cobalt"].value as? String, "Selected")
+    }
+
+    func testUnlockBannerAppearsOnFirstPress() {
+        let app = launch()
+        let button = app.buttons["pressButton"]
+        XCTAssertTrue(button.waitForExistence(timeout: 5))
+        button.tap()
+        XCTAssertTrue(app.staticTexts["unlockBanner"].waitForExistence(timeout: 3) || app.otherElements["unlockBanner"].exists)
+        XCTAssertEqual(value(app, "currentRun"), "1")
+    }
+
     func testHugeNumbersKeepLayoutIntact() {
         let app = launch(extra: ["-UITestSeedBest", "9223372036854775000", "-UITestSeedTotal", "9223372036854775000"])
         let button = app.buttons["pressButton"]

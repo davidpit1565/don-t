@@ -5,6 +5,7 @@ import SwiftUI
 struct PlungerButtonStyle: ButtonStyle {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     var diameter: CGFloat
+    var theme: ButtonTheme = .classic
 
     func makeBody(configuration: Configuration) -> some View {
         let pressed = configuration.isPressed
@@ -20,12 +21,12 @@ struct PlungerButtonStyle: ButtonStyle {
             // Cap
             ZStack {
                 Circle()
-                    .fill(DS.Palette.darkRed)
+                    .fill(theme.dark)
                     .offset(y: pressed ? depth * 0.2 : depth)
                 Circle()
                     .fill(
                         LinearGradient(
-                            colors: [pressed ? DS.Palette.buttonRed : DS.Palette.highlight, DS.Palette.buttonRed, DS.Palette.darkRed],
+                            colors: [pressed ? theme.base : theme.highlight, theme.base, theme.dark],
                             startPoint: .top, endPoint: .bottom
                         )
                     )
@@ -39,7 +40,7 @@ struct PlungerButtonStyle: ButtonStyle {
             }
             .padding(diameter * 0.075)
             .scaleEffect(pressed ? 0.965 : 1)
-            .shadow(color: DS.Palette.darkRed.opacity(pressed ? 0.25 : 0.45), radius: pressed ? 6 : 14, y: pressed ? 2 : 8)
+            .shadow(color: theme.dark.opacity(pressed ? 0.25 : 0.45), radius: pressed ? 6 : 14, y: pressed ? 2 : 8)
         }
         .frame(width: diameter, height: diameter)
         .contentShape(Circle())
@@ -49,6 +50,7 @@ struct PlungerButtonStyle: ButtonStyle {
 
 struct BigRedButtonLabel: View {
     var diameter: CGFloat
+    var theme: ButtonTheme = .classic
 
     var body: some View {
         VStack(spacing: 0) {
@@ -57,8 +59,8 @@ struct BigRedButtonLabel: View {
         }
         .font(.system(size: diameter * 0.15, weight: .heavy, design: .default))
         .tracking(diameter * 0.006)
-        .foregroundStyle(.white)
-        .shadow(color: DS.Palette.darkRed.opacity(0.7), radius: 0, y: 1.5)
+        .foregroundStyle(theme.label)
+        .shadow(color: theme.dark.opacity(0.7), radius: 0, y: 1.5)
         .minimumScaleFactor(0.5)
         .lineLimit(1)
         .accessibilityHidden(true)

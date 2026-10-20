@@ -42,14 +42,17 @@ final class HomeViewModelTests: XCTestCase {
             for _ in 0..<9 { model.press() }
             XCTAssertEqual(model.stats.currentRun, 9)
             XCTAssertEqual(model.pressCount, 9)
-            XCTAssertEqual(spy.pressCount, 9)
-            XCTAssertEqual(spy.milestoneCount, 0)
-            model.press() // 10th crosses the first milestone
+            // press 1 unlocks the "Weak Moment" achievement and gets the stronger haptic
+            XCTAssertEqual(spy.pressCount, 8)
             XCTAssertEqual(spy.milestoneCount, 1)
-            XCTAssertEqual(spy.pressCount, 9, "milestone press uses the stronger haptic instead")
+            model.press() // 10th crosses the first milestone
+            XCTAssertEqual(spy.milestoneCount, 2)
+            XCTAssertEqual(spy.pressCount, 8, "milestone press uses the stronger haptic instead")
             XCTAssertEqual(model.reactionText, ReactionCatalog.milestones[10]?.text)
             model.press()
-            XCTAssertEqual(spy.milestoneCount, 1, "not repeated on later presses")
+            XCTAssertEqual(spy.milestoneCount, 2, "not repeated on later presses")
+            XCTAssertEqual(spy.pressCount, 9)
+            XCTAssertEqual(spy.pressCount + spy.milestoneCount, model.pressCount, "exactly one haptic per press")
         }
     }
 

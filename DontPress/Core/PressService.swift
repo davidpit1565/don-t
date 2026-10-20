@@ -17,6 +17,9 @@ final class PressService {
         )
     }
 
+    var savedThemeID: String? { store.loadThemeID() }
+    func saveThemeID(_ id: String) { store.saveThemeID(id) }
+
     @discardableResult
     func registerPress() -> PressResult {
         let previousRun = stats.currentRun

@@ -9,12 +9,16 @@ struct PersistedStats: Equatable {
 protocol StatsStoring: AnyObject {
     func load() -> PersistedStats
     func save(_ stats: PersistedStats)
+    /// The chosen button style id, if any.
+    func loadThemeID() -> String?
+    func saveThemeID(_ id: String)
 }
 
 /// Lightweight local store. Missing, negative, or wrongly typed values read as 0.
 final class UserDefaultsStatsStore: StatsStoring {
     static let bestKey = "dontpress.personalBest"
     static let totalKey = "dontpress.totalPresses"
+    static let themeKey = "dontpress.buttonTheme"
 
     private let defaults: UserDefaults
 
@@ -34,6 +38,9 @@ final class UserDefaultsStatsStore: StatsStoring {
         defaults.set(Swift.max(stats.totalPresses, 0), forKey: Self.totalKey)
     }
 
+    func loadThemeID() -> String? { defaults.object(forKey: Self.themeKey) as? String }
+    func saveThemeID(_ id: String) { defaults.set(id, forKey: Self.themeKey) }
+
     private func readCounter(_ key: String) -> Int {
         guard let raw = defaults.object(forKey: key) else { return 0 }
         if let value = raw as? Int { return Swift.max(value, 0) }
@@ -44,10 +51,15 @@ final class UserDefaultsStatsStore: StatsStoring {
 /// Isolated store for tests and previews.
 final class InMemoryStatsStore: StatsStoring {
     private var stats: PersistedStats
+    private var themeID: String?
 
-    init(_ stats: PersistedStats = PersistedStats()) {
+    init(_ stats: PersistedStats = PersistedStats(), themeID: String? = nil) {
         self.stats = stats
+        self.themeID = themeID
     }
+
+    func loadThemeID() -> String? { themeID }
+    func saveThemeID(_ id: String) { themeID = id }
 
     func load() -> PersistedStats { stats }
     func save(_ stats: PersistedStats) { self.stats = stats }

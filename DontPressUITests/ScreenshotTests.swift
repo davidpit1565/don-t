@@ -24,7 +24,9 @@ final class ScreenshotTests: XCTestCase {
         XCTAssertTrue(button.waitForExistence(timeout: 10))
         shot(app, "01-launch")
 
-        for _ in 0..<12 { button.tap() }
+        for _ in 0..<10 { button.tap() }
+        shot(app, "02a-unlock-10")
+        for _ in 0..<2 { button.tap() }
         shot(app, "02-run-12")
 
         for _ in 0..<13 { button.tap() }   // 25th press crosses a milestone
@@ -40,6 +42,29 @@ final class ScreenshotTests: XCTestCase {
         app.buttons["shareButton"].tap()
         sleep(3)
         shot(app, "04-share-sheet")
+    }
+
+    func testCaptureCollectionAndThemes() {
+        var app = launch(["-UITestSeedBest", "120", "-UITestSeedTotal", "800"])
+        XCTAssertTrue(app.buttons["collectionButton"].waitForExistence(timeout: 10))
+        app.buttons["collectionButton"].tap()
+        XCTAssertTrue(app.buttons["theme-gold"].waitForExistence(timeout: 5))
+        shot(app, "09-collection")
+        app.buttons["theme-gold"].tap()
+        app.buttons["collectionDone"].tap()
+        XCTAssertTrue(app.buttons["pressButton"].waitForExistence(timeout: 5))
+        app.buttons["pressButton"].tap()
+        shot(app, "10-theme-gold")
+
+        app.terminate()
+        app = XCUIApplication()
+        app.launchArguments = ["-UITestMode"]
+        app.launch()
+        app.buttons["collectionButton"].tap()
+        app.buttons["theme-cobalt"].tap()
+        app.buttons["collectionDone"].tap()
+        for _ in 0..<5 { app.buttons["pressButton"].tap() }
+        shot(app, "11-theme-cobalt")
     }
 
     func testCaptureLargeNumbers() {

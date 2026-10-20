@@ -4,6 +4,8 @@ struct HomeView: View {
     @Bindable var model: HomeViewModel
     @State private var isSharing = false
     @State private var shareError = false
+    @State private var showCollection = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @Environment(\.dynamicTypeSize) private var typeSize
 
@@ -27,6 +29,8 @@ struct HomeView: View {
             }
             .scrollBounceBehavior(.basedOnSize)
         }
+        .overlay(alignment: .top) { unlockBanner }
+        .sheet(isPresented: $showCollection) { CollectionView(model: model) }
         .background(DS.Palette.background.ignoresSafeArea())
         .preferredColorScheme(.dark)
         .alert("Couldn't make the image", isPresented: $shareError) {
@@ -40,12 +44,26 @@ struct HomeView: View {
 
     private var header: some View {
         VStack(spacing: DS.Spacing.s) {
-            Text("DON'T PRESS")
-                .font(.footnote.weight(.heavy))
-                .tracking(3)
-                .foregroundStyle(DS.Palette.textPrimary)
-                .accessibilityAddTraits(.isHeader)
-                .accessibilityIdentifier("wordmark")
+            HStack {
+                Color.clear.frame(width: 44, height: 44)
+                Spacer()
+                Text("DON'T PRESS")
+                    .font(.footnote.weight(.heavy))
+                    .tracking(3)
+                    .foregroundStyle(DS.Palette.textPrimary)
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityIdentifier("wordmark")
+                Spacer()
+                Button { showCollection = true } label: {
+                    Image(systemName: "trophy")
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(DS.Palette.textSecondary)
+                        .frame(width: 44, height: 44)
+                }
+                .accessibilityLabel("Achievements and button styles")
+                .accessibilityValue("\(model.unlockedAchievementCount) of \(Achievement.all.count) unlocked")
+                .accessibilityIdentifier("collectionButton")
+            }
             Text("Whatever you do, don't press it.")
                 .font(.headline.weight(.regular))
                 .foregroundStyle(DS.Palette.textSecondary)
@@ -59,9 +77,9 @@ struct HomeView: View {
         return Button {
             model.press()
         } label: {
-            BigRedButtonLabel(diameter: diameter)
+            BigRedButtonLabel(diameter: diameter, theme: model.selectedTheme)
         }
-        .buttonStyle(PlungerButtonStyle(diameter: diameter))
+        .buttonStyle(PlungerButtonStyle(diameter: diameter, theme: model.selectedTheme))
         .accessibilityLabel("Don't press")
         .accessibilityHint("Double tap to press it anyway. Adds one to your run.")
         .accessibilityValue(buttonAccessibilityValue)
@@ -132,6 +150,29 @@ struct HomeView: View {
         }
         .font(.footnote)
         .foregroundStyle(DS.Palette.textSecondary)
+    }
+
+    @ViewBuilder
+    private var unlockBanner: some View {
+        if let message = model.unlockMessage {
+            Text(message)
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(DS.Palette.textPrimary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, DS.Spacing.m)
+                .padding(.vertical, DS.Spacing.s)
+                .background(DS.Palette.surface, in: Capsule())
+                .overlay(Capsule().strokeBorder(DS.Palette.border, lineWidth: 1))
+                .padding(.top, DS.Spacing.s)
+                .padding(.horizontal, DS.Spacing.l)
+                .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
+                .accessibilityIdentifier("unlockBanner")
+                .task(id: message) {
+                    AccessibilityNotification.Announcement(message).post()
+                    try? await Task.sleep(for: .seconds(3.5))
+                    withAnimation(reduceMotion ? nil : .snappy) { model.dismissUnlockMessage() }
+                }
+        }
     }
 
     // MARK: Sharing
