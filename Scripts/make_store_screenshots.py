@@ -125,4 +125,4 @@ ImageDraw.Draw(img).rounded_rectangle([cx, cy, cx + cw, cy + c.height], 56, outl
 save(img, "07-share.png")
 
 slide_phone("08-private.png", [[Wt("No ads. No accounts.")], [R("No excuses.")]],
-            "Works offline. Nothing leaves your phone.", pick("03b-run-40", "02-run-12"))
+            "Works offline. No data collected.", pick("03b-run-40", "02-run-12"))

@@ -1,5 +1,7 @@
 # DON'T PRESS: App Store readiness
 
+> Copy-paste values and the step-by-step submission flow are in [`APP_STORE_CONNECT.md`](./APP_STORE_CONNECT.md).
+
 Status of this document: **preparation only. Nothing has been submitted or published,
 and approval is not promised.** Items are labelled Verified (checked in this repo),
 or Open (needs the owner, a Mac, or Apple tooling).
