@@ -1,0 +1,81 @@
+name: iOS build, test and screenshots
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain info
+        run: |
+          xcodebuild -version
+          xcrun simctl list devices available | grep -i iphone | head -20
+
+      - name: Build and test (unit + UI) on a simulator
+        id: tests
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          mkdir -p build
+          xcodebuild test \
+            -project DontPress.xcodeproj -scheme DontPress \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -resultBundlePath build/result.xcresult \
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee build/xcodebuild.log | tail -150
+
+      - name: Export screenshots
+        if: always()
+        run: |
+          mkdir -p build/attachments screenshots
+          xcrun xcresulttool export attachments --path build/result.xcresult --output-path build/attachments || true
+          python3 - <<'PY'
+          import json, os, shutil
+          src = "build/attachments"
+          names = {}
+          mf = os.path.join(src, "manifest.json")
+          if os.path.exists(mf):
+              for test in json.load(open(mf)):
+                  for a in test.get("attachments", []):
+                      names[a["exportedFileName"]] = a.get("suggestedHumanReadableName", a["exportedFileName"])
+          for f in sorted(os.listdir(src)):
+              if f == "manifest.json": continue
+              human = names.get(f, f)
+              base = human.split("_")[0]
+              ext = os.path.splitext(f)[1] or ".png"
+              shutil.copy(os.path.join(src, f), os.path.join("screenshots", base + ext))
+          print(sorted(os.listdir("screenshots")))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots-and-logs
+          path: |
+            screenshots
+            build/xcodebuild.log
+
+      - name: Publish screenshots to ci-screenshots branch
+        if: always() && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          [ -n "$(ls -A screenshots 2>/dev/null)" ] || exit 0
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git checkout --orphan ci-screenshots
+          git rm -rf . >/dev/null 2>&1 || true
+          cp -r screenshots/* . 
+          cp build/xcodebuild.log . || true
+          git add -A
+          git commit -m "Screenshots for ${GITHUB_SHA}"
+          git push --force origin ci-screenshots
+
+      - name: Fail if tests failed
+        if: steps.tests.outcome == 'failure'
+        run: exit 1
