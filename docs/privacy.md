@@ -15,9 +15,12 @@ Your *current run* is kept in memory only and starts again at zero every time th
 These numbers are not linked to your identity. The app has no accounts and does not ask for your name, email, location, contacts, photos, or any other personal information.
 
 ## What the app does not do
-- No network requests: the app does not connect to any server.
+- No network requests of its own: the app does not connect to any server run by the developer. (Only Apple's App Store handles the optional purchase.)
 - No analytics, advertising, tracking, or crash-reporting SDKs. No third-party code at all.
 - No permissions are requested.
+
+## Purchases
+The app offers one optional one-time purchase ("Pro"). Purchases are processed entirely by Apple through the App Store. The developer does not receive your payment details, Apple ID, or name, and the app does not send any purchase information anywhere else. The app only asks Apple whether this Apple ID owns Pro.
 
 ## Sharing
 When you tap **Share personal best**, the app creates an image on your device and opens the standard iOS share sheet. The image goes only where *you* choose to send it. The developer never receives it.

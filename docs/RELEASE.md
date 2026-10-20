@@ -64,6 +64,7 @@ or Open (needs the owner, a Mac, or Apple tooling).
   > • Tactile button with real haptics
   > • 100+ hand-written reactions that escalate the longer you ignore the warnings
   > • 12 achievements and 5 button styles (Classic, Blue Mistake, Stealth, Radioactive, Gold Standard) that unlock as you go
+  > • Optional one-time Pro purchase unlocks every button style instantly (they can also be earned for free)
   > • Current run, personal best and total presses
   > • Shareable achievement image through the standard iOS share sheet
   > • Works fully offline. No account, no ads, no tracking.
@@ -111,12 +112,12 @@ No iPad screenshots are needed (iPhone-only).
 
 ## App Review Notes (paste into App Store Connect → App Review Information → Notes)
 
-> DON'T PRESS is a fully offline, single-player toy. There is no login, no account, no network access and no in-app purchase, so no demo account is needed.
+> DON'T PRESS is a fully offline, single-player toy. There is no login and no account, so no demo account is needed. The only network use is Apple's StoreKit for one optional in-app purchase ("DON'T PRESS Pro", non-consumable) that unlocks all button styles immediately; the same styles can also be earned for free by playing.
 >
 > How to see everything in about a minute:
 > 1. Tap the big red button. Each press increments Current Run and Total Presses, plays a light haptic and shows a different hand-written reaction (100+ lines in six tiers that escalate as the run grows).
 > 2. Keep tapping: at 10, 25, 50, 100, 250, 500 and 1,000 presses a milestone line and a stronger haptic fire once. Achievements (12) and button styles (5) unlock as thresholds are reached; a banner announces each unlock.
-> 3. Tap the trophy icon (top right) to open Collection: choose an unlocked button style and see locked ones with their requirements and progress.
+> 3. Tap the trophy icon (top right) to open Collection: choose an unlocked button style and see locked ones with their requirements and progress. Tapping a locked style, or the Pro row at the bottom, shows the optional Pro offer (price, what it includes, and Restore Purchases). To test the purchase, use a Sandbox Apple ID.
 > 4. Tap "Share personal best" (enabled after the first press) to render a portrait achievement card with the user's real number and open the standard iOS share sheet.
 >
 > Current Run starts at zero on every cold launch by design; Personal Best and Total Presses are stored locally (UserDefaults). The app collects no data. Privacy Policy and Support pages are linked at the bottom of the main screen.

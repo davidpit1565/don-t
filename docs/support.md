@@ -24,6 +24,9 @@ There is nothing to share until you have pressed at least once.
 **How do I unlock button styles and achievements?**
 Tap the trophy icon at the top right of the main screen. Locked items show what you need to do and your progress. Styles unlock at: Blue Mistake (run of 10), Stealth (run of 50), Radioactive (run of 250), Gold Standard (500 total presses).
 
+**What is Pro, and how do I restore it?**
+Pro is an optional one-time purchase (no subscription) that unlocks all five button styles right away. You can also unlock the styles for free by playing. If you reinstall or switch iPhones, open the trophy screen, tap a locked style or the Pro row, and choose "Restore Purchases" (it uses the same Apple ID). Purchase questions or refunds: Apple handles refunds at reportaproblem.apple.com; for anything else, email me.
+
 **Is my score online or ranked against other people?**
 No. Everything stays on your device. The app has no accounts, leaderboard, or server.
 
