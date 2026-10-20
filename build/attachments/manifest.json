@@ -1,0 +1,182 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2911FD29-A09E-4A81-BEA7-99A616FB7FC8",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "E5D05467-E2C2-4FE1-8E00-66E6A9CD0CE7.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "08-share-card-huge_0_75B88EE3-D8C4-4830-8CCC-ADBDE6EE449C.png",
+        "timestamp" : 1792505323.476
+      }
+    ],
+    "testIdentifier" : "ShareCardRenderTests/testHugeCountStillRenders()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressTests/ShareCardRenderTests/testHugeCountStillRenders"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2911FD29-A09E-4A81-BEA7-99A616FB7FC8",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "E2623885-399F-4AA3-B927-6992FAE18621.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "07-share-card-847_0_7DE4669F-66EA-4888-BB08-217D569750A7.png",
+        "timestamp" : 1792505323.78
+      }
+    ],
+    "testIdentifier" : "ShareCardRenderTests/testShareCardRendersPortraitImageAndAttachesIt()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressTests/ShareCardRenderTests/testShareCardRendersPortraitImageAndAttachesIt"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2911FD29-A09E-4A81-BEA7-99A616FB7FC8",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "45348B89-2990-4E28-B6A3-5DD962E52391.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "06-accessibility-xl_0_5A54140D-BF3E-4AFC-B7D9-F65FFA44DBFB.png",
+        "timestamp" : 1792505556.5
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureAccessibilityTextSize()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testCaptureAccessibilityTextSize"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2911FD29-A09E-4A81-BEA7-99A616FB7FC8",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "A43894E2-8750-47B1-9E86-43842A7F4177.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "11-theme-cobalt_0_1E2E465D-C9C8-4BA1-8E37-6AF6F0A2699E.png",
+        "timestamp" : 1792505588.154
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2911FD29-A09E-4A81-BEA7-99A616FB7FC8",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "257FCF1B-F225-489D-AC05-E6348483E845.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "10-theme-gold_0_C65962EC-76E2-4E2A-B914-0BCE4A9BB6A4.png",
+        "timestamp" : 1792505575.212
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2911FD29-A09E-4A81-BEA7-99A616FB7FC8",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "6C4200FB-C7EB-4A8A-9797-9FFBCA746B13.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "12-pro-offer_0_1268C7C2-9373-4510-ADBF-B3B819FC6D1B.png",
+        "timestamp" : 1792505568.84
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2911FD29-A09E-4A81-BEA7-99A616FB7FC8",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "BB6CEE60-F9E9-419C-9E1B-7F26BC3B4DF6.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "09-collection_0_C987CAA7-959F-45FE-B627-71CD54428086.png",
+        "timestamp" : 1792505566.079
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureCollectionAndThemes()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testCaptureCollectionAndThemes"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2911FD29-A09E-4A81-BEA7-99A616FB7FC8",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "EFBA43D0-2F3C-4459-AAC8-BFC4FFF82A26.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "05-large-numbers_0_58B018C2-97ED-40A4-BE48-BBE14CA91DCE.png",
+        "timestamp" : 1792505596.517
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureLargeNumbers()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testCaptureLargeNumbers"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2911FD29-A09E-4A81-BEA7-99A616FB7FC8",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "BA858FB8-7702-44F0-87C7-AE03C89F2606.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "04-share-sheet_0_891EACA3-DC40-4274-A0C4-50325EC3EBA5.png",
+        "timestamp" : 1792505676.119
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2911FD29-A09E-4A81-BEA7-99A616FB7FC8",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "C1780AC9-8740-44F7-AE84-FF62F896FC9A.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "03d-run-110_0_4CF1891A-A8EC-4C00-96CC-5F160D8130B1.png",
+        "timestamp" : 1792505667.374
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2911FD29-A09E-4A81-BEA7-99A616FB7FC8",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "7065312F-A688-4600-97EB-E7DED04DFD00.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "03c-run-75_0_81824E6D-54BD-4FBF-BD3F-76FD864F6DB1.png",
+        "timestamp" : 1792505650.017
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2911FD29-A09E-4A81-BEA7-99A616FB7FC8",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "AF4CBCB5-779C-423C-8CB1-CDBA92552DAC.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "03b-run-40_0_0EE1289D-9B57-49DE-A1BF-7AABBA0CFF7D.png",
+        "timestamp" : 1792505631.963
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2911FD29-A09E-4A81-BEA7-99A616FB7FC8",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "E028D3BB-2D44-4AB7-809B-324FA8517293.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "03-milestone-25_0_FCCA51A5-CEC8-49A4-B5DD-2946E5275EEA.png",
+        "timestamp" : 1792505623.8
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2911FD29-A09E-4A81-BEA7-99A616FB7FC8",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "BF8A4FF1-EAAD-4E8E-8FF5-0866CFFFFBD1.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "02-run-12_0_D9AC3E97-54F4-4AEC-A918-60AE20E80EA9.png",
+        "timestamp" : 1792505615.625
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2911FD29-A09E-4A81-BEA7-99A616FB7FC8",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "F74B7FE3-26E4-4180-8DD3-5B3FF4909ED3.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "02a-unlock-10_0_A89F129B-C945-4556-B291-9746FA510C3D.png",
+        "timestamp" : 1792505613.342
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2911FD29-A09E-4A81-BEA7-99A616FB7FC8",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "69C96D2C-60DA-4B64-8EE0-84A0479375B6.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "01-launch_0_C315FD1C-3029-4CA3-8F89-94320821A572.png",
+        "timestamp" : 1792505607.901
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureScreens()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testCaptureScreens"
+  }
+]
