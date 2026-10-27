@@ -201,11 +201,13 @@ scheme = f'''<?xml version="1.0" encoding="UTF-8"?>
             {ref(UITESTS, "DontPressUITests", "DontPressUITests.xctest")}
          </TestableReference>
       </Testables>
+      <StoreKitConfigurationFileReference identifier = "../../DontPress.storekit"></StoreKitConfigurationFileReference>
    </TestAction>
    <LaunchAction buildConfiguration = "Debug" selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB" launchStyle = "0" useCustomWorkingDirectory = "NO" ignoresPersistentStateOnLaunch = "NO" debugDocumentVersioning = "YES" debugServiceExtension = "internal" allowLocationSimulation = "YES">
       <BuildableProductRunnable runnableDebuggingMode = "0">
          {ref(APP, "DontPress", "DontPress.app")}
       </BuildableProductRunnable>
+      <StoreKitConfigurationFileReference identifier = "../../DontPress.storekit"></StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction buildConfiguration = "Release" shouldUseLaunchSchemeArgsEnv = "YES" savedToolIdentifier = "" useCustomWorkingDirectory = "NO" debugDocumentVersioning = "YES">
       <BuildableProductRunnable runnableDebuggingMode = "0">

@@ -1,0 +1,62 @@
+name: Pro offer screenshot (one-off)
+
+on:
+  push:
+    branches: [ci/pro-screenshot]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  shot:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Capture Pro offer with StoreKit price
+        id: t
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          mkdir -p build
+          xcrun simctl list devices available | grep -i "iphone 16 pro max" | head -2
+          xcodebuild test \
+            -project DontPress.xcodeproj -scheme DontPress \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro Max' \
+            -only-testing:DontPressUITests/ScreenshotTests/testCaptureProOfferWithPrice \
+            -resultBundlePath build/result.xcresult \
+            CODE_SIGNING_ALLOWED=NO 2>&1 | tee build/xcodebuild.log | tail -80
+      - name: Export screenshot
+        if: always()
+        run: |
+          mkdir -p build/att out
+          xcrun xcresulttool export attachments --path build/result.xcresult --output-path build/att || true
+          python3 - <<'PY'
+          import json, os, shutil
+          src="build/att"; names={}
+          mf=os.path.join(src,"manifest.json")
+          if os.path.exists(mf):
+              for t in json.load(open(mf)):
+                  for a in t.get("attachments",[]):
+                      names[a["exportedFileName"]]=a.get("suggestedHumanReadableName","")
+          for f in sorted(os.listdir(src)):
+              if f=="manifest.json": continue
+              print(f, names.get(f))
+              if names.get(f,"").startswith("iap-review"):
+                  shutil.copy(os.path.join(src,f),"out/iap-review.png")
+          PY
+          python3 -c "
+          import struct
+          d=open('out/iap-review.png','rb').read(32); print('png size', struct.unpack('>II', d[16:24]))" || true
+      - name: Publish to ci-iap branch
+        if: always()
+        run: |
+          [ -f out/iap-review.png ] || { cp build/xcodebuild.log out/ 2>/dev/null || true; }
+          git config user.name "github-actions"; git config user.email "actions@users.noreply.github.com"
+          git checkout --orphan ci-iap; git rm -rf . >/dev/null 2>&1 || true
+          cp out/* . 2>/dev/null || true; cp build/xcodebuild.log . 2>/dev/null || true
+          git add -A; git commit -m "Pro offer screenshot ${GITHUB_SHA}" || true
+          git push --force origin ci-iap
+      - name: Fail if the test failed
+        if: steps.t.outcome == 'failure'
+        run: exit 1

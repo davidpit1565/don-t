@@ -73,6 +73,21 @@ final class ScreenshotTests: XCTestCase {
         shot(app, "11-theme-cobalt")
     }
 
+    /// Real Pro offer with the product loaded from DontPress.storekit (price visible).
+    func testCaptureProOfferWithPrice() {
+        let app = launch(["-UITestSeedBest", "5", "-UITestSeedTotal", "5"])
+        XCTAssertTrue(app.buttons["collectionButton"].waitForExistence(timeout: 10))
+        app.buttons["collectionButton"].tap()
+        XCTAssertTrue(app.buttons["theme-gold"].waitForExistence(timeout: 5))
+        app.buttons["theme-gold"].tap()                    // locked: opens the Pro offer
+        let buy = app.buttons["proBuy"]
+        XCTAssertTrue(buy.waitForExistence(timeout: 5))
+        let loaded = NSPredicate(format: "label CONTAINS 'Unlock Pro'")
+        expectation(for: loaded, evaluatedWith: buy)
+        waitForExpectations(timeout: 20)                   // fails if StoreKit never supplies a price
+        shot(app, "iap-review")
+    }
+
     func testCaptureLargeNumbers() {
         let app = launch(["-UITestSeedBest", "9223372036854775000", "-UITestSeedTotal", "9223372036854775000"])
         XCTAssertTrue(app.buttons["pressButton"].waitForExistence(timeout: 10))
