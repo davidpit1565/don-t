@@ -1,0 +1,17 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "9F3D563E-AF8A-4089-B32E-3ADADEB067F0",
+        "deviceName" : "iPhone 16 Pro Max",
+        "exportedFileName" : "DE782F84-555C-4255-B409-DAE4D24227BF.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "iap-review_0_F5FE380B-F5B9-43FA-B4D3-B4D127DF36F5.png",
+        "timestamp" : 1793133482.222
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureProOfferWithPrice()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testCaptureProOfferWithPrice"
+  }
+]
