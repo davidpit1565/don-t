@@ -36,6 +36,9 @@ protocol StatsStoring: AnyObject {
     /// Ids of creatures hatched from the egg so far.
     func loadDiscoveredCreatureIDs() -> [String]
     func saveDiscoveredCreatureIDs(_ ids: [String])
+    // MARK: Pro nudges (feat-nudges). See ProNudgeScheduler.
+    func loadProNudgeState() -> ProNudgeState
+    func saveProNudgeState(_ state: ProNudgeState)
 }
 
 /// Lightweight local store. Missing, negative, or wrongly typed values read as 0.
@@ -133,6 +136,54 @@ final class UserDefaultsStatsStore: StatsStoring {
 
     func loadSignatureReactionID() -> String? { defaults.object(forKey: Self.signatureReactionKey) as? String }
     func saveSignatureReactionID(_ id: String) { defaults.set(id, forKey: Self.signatureReactionKey) }
+
+    // MARK: Pro nudges (feat-nudges). Each field has its own key; a wrong type reads as its default.
+    static let nudgeLaunchesKey = "dontpress.nudge.launches"
+    static let nudgeFirstLaunchKey = "dontpress.nudge.firstLaunchAt"
+    static let nudgeLastShownKey = "dontpress.nudge.lastAutomaticShownAt"
+    static let nudgeIntroShownKey = "dontpress.nudge.introShown"
+    static let nudgePresentedKey = "dontpress.nudge.presented"
+    static let nudgeNotNowKey = "dontpress.nudge.notNow"
+    static let nudgeSnoozedUntilKey = "dontpress.nudge.snoozedUntil"
+    static let nudgeOptedOutKey = "dontpress.nudge.optedOut"
+    static let nudgeLastCopyKey = "dontpress.nudge.lastCopy"
+
+    func loadProNudgeState() -> ProNudgeState {
+        ProNudgeState(
+            launchCount: readCounter(Self.nudgeLaunchesKey),
+            firstLaunchAt: readDate(Self.nudgeFirstLaunchKey),
+            lastAutomaticShownAt: readDate(Self.nudgeLastShownKey),
+            automaticShownInIntroWindow: readCounter(Self.nudgeIntroShownKey),
+            presentedCount: readCounter(Self.nudgePresentedKey),
+            notNowCount: readCounter(Self.nudgeNotNowKey),
+            snoozedUntil: readDate(Self.nudgeSnoozedUntilKey),
+            optedOut: (defaults.object(forKey: Self.nudgeOptedOutKey) as? Bool) ?? false,
+            lastCopyID: defaults.object(forKey: Self.nudgeLastCopyKey) as? String
+        ).sanitized()
+    }
+
+    func saveProNudgeState(_ state: ProNudgeState) {
+        let state = state.sanitized()
+        defaults.set(state.launchCount, forKey: Self.nudgeLaunchesKey)
+        writeDate(state.firstLaunchAt, Self.nudgeFirstLaunchKey)
+        writeDate(state.lastAutomaticShownAt, Self.nudgeLastShownKey)
+        defaults.set(state.automaticShownInIntroWindow, forKey: Self.nudgeIntroShownKey)
+        defaults.set(state.presentedCount, forKey: Self.nudgePresentedKey)
+        defaults.set(state.notNowCount, forKey: Self.nudgeNotNowKey)
+        writeDate(state.snoozedUntil, Self.nudgeSnoozedUntilKey)
+        defaults.set(state.optedOut, forKey: Self.nudgeOptedOutKey)
+        if let id = state.lastCopyID { defaults.set(id, forKey: Self.nudgeLastCopyKey) } else { defaults.removeObject(forKey: Self.nudgeLastCopyKey) }
+    }
+
+    /// Dates are stored as seconds since 1970; anything else (or a non-finite number) reads as nil.
+    private func readDate(_ key: String) -> Date? {
+        guard let seconds = defaults.object(forKey: key) as? Double, seconds.isFinite else { return nil }
+        return Date(timeIntervalSince1970: seconds)
+    }
+
+    private func writeDate(_ date: Date?, _ key: String) {
+        if let date { defaults.set(date.timeIntervalSince1970, forKey: key) } else { defaults.removeObject(forKey: key) }
+    }
 }
 
 /// Isolated store for tests and previews.
@@ -178,4 +229,9 @@ final class InMemoryStatsStore: StatsStoring {
     func saveStreakState(_ state: StreakState) { streakState = state }
     func loadSignatureReactionID() -> String? { signatureReactionID }
     func saveSignatureReactionID(_ id: String) { signatureReactionID = id }
+
+    // MARK: Pro nudges (feat-nudges)
+    var proNudgeState = ProNudgeState()
+    func loadProNudgeState() -> ProNudgeState { proNudgeState }
+    func saveProNudgeState(_ state: ProNudgeState) { proNudgeState = state }
 }
