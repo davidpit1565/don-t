@@ -42,8 +42,15 @@ final class HomeViewModel {
     private(set) var daily: DailySnapshot?
     @ObservationIgnored private let dailyTracker: DailyTracker?
 
+    // MARK: Pro nudges (feat-nudges). Logic in Core/ProNudgeScheduler.swift; actions in HomeViewModel+ProNudges.swift.
+    /// The soft Pro card to show, if any. Never blocks or changes counting.
+    var pendingNudge: ProNudge?
+    @ObservationIgnored let nudges: ProNudgeScheduler?
+
     init(service: PressService, reactions: ReactionEngine = ReactionEngine(), haptics: HapticFeedback? = nil,
-         sounds: SoundEffects? = nil, daily: DailyTracker? = nil, toys: ToySession? = nil) {
+         sounds: SoundEffects? = nil, daily: DailyTracker? = nil, toys: ToySession? = nil,
+         nudges: ProNudgeScheduler? = nil) {
+        self.nudges = nudges
         self.dailyTracker = daily
         self.daily = daily?.snapshot
         self.service = service
@@ -113,8 +120,10 @@ final class HomeViewModel {
             if let reaction = SignatureReaction.reaction(withText: reactionText) { dailyTracker.noteReaction(reaction) }
             if before != .success, after.result == .success {
                 unlockMessage = [unlockMessage, "Daily challenge complete. Now stop."].compactMap { $0 }.joined(separator: " · ")
+                nudges?.offer(.dailyChallengeCompleted) // feat-nudges: shown later, only once tapping stops
             }
         }
+        nudges?.notePress() // feat-nudges: after counting; keeps prompts away from rapid tapping
     }
 
     /// The view reports that a set-piece's timeline ended (or was interrupted). Stale ids are ignored.
@@ -176,6 +185,7 @@ final class HomeViewModel {
         guard value != isPro else { return }
         isPro = value
         service.saveIsPro(value)
+        if value { pendingNudge = nil } // feat-nudges: never shown to Pro owners
         selectedTheme = ButtonTheme.resolve(id: selectedTheme.id, stats: stats, isPro: value)
         if selectedTheme.id != service.savedThemeID { service.saveThemeID(selectedTheme.id) }
         if !value && toys.selectedKind.requiresPro { toys.select(.button) }
