@@ -15,6 +15,14 @@ protocol StatsStoring: AnyObject {
     /// Last known Pro entitlement (StoreKit stays the source of truth; this avoids a flicker at launch).
     func loadIsPro() -> Bool
     func saveIsPro(_ value: Bool)
+
+    // MARK: Daily challenge & streak (feat-daily)
+    func loadDailyProgress() -> DailyProgress
+    func saveDailyProgress(_ progress: DailyProgress)
+    func loadStreakState() -> StreakState
+    func saveStreakState(_ state: StreakState)
+    func loadSignatureReactionID() -> String?
+    func saveSignatureReactionID(_ id: String)
 }
 
 /// Lightweight local store. Missing, negative, or wrongly typed values read as 0.
@@ -52,6 +60,45 @@ final class UserDefaultsStatsStore: StatsStoring {
         if let value = raw as? Int { return Swift.max(value, 0) }
         return 0
     }
+
+    // MARK: Daily challenge & streak (feat-daily). Wrong types read as defaults.
+    static let dailyDayKey = "dontpress.daily.day"
+    static let dailyPressesKey = "dontpress.daily.presses"
+    static let streakLastDayKey = "dontpress.streak.lastDay"
+    static let streakCurrentKey = "dontpress.streak.current"
+    static let streakBestKey = "dontpress.streak.best"
+    static let streakFreezeDayKey = "dontpress.streak.freezeDay"
+    static let signatureReactionKey = "dontpress.signatureReaction"
+
+    func loadDailyProgress() -> DailyProgress {
+        let day = defaults.object(forKey: Self.dailyDayKey) as? Int
+        return DailyProgress(day: day, presses: day == nil ? 0 : readCounter(Self.dailyPressesKey))
+    }
+
+    func saveDailyProgress(_ progress: DailyProgress) {
+        if let day = progress.day { defaults.set(day, forKey: Self.dailyDayKey) } else { defaults.removeObject(forKey: Self.dailyDayKey) }
+        defaults.set(Swift.max(progress.presses, 0), forKey: Self.dailyPressesKey)
+    }
+
+    func loadStreakState() -> StreakState {
+        StreakState(
+            lastPlayedDay: defaults.object(forKey: Self.streakLastDayKey) as? Int,
+            current: readCounter(Self.streakCurrentKey),
+            best: readCounter(Self.streakBestKey),
+            lastFreezeDay: defaults.object(forKey: Self.streakFreezeDayKey) as? Int
+        ).sanitized()
+    }
+
+    func saveStreakState(_ state: StreakState) {
+        let state = state.sanitized()
+        if let day = state.lastPlayedDay { defaults.set(day, forKey: Self.streakLastDayKey) } else { defaults.removeObject(forKey: Self.streakLastDayKey) }
+        defaults.set(state.current, forKey: Self.streakCurrentKey)
+        defaults.set(state.best, forKey: Self.streakBestKey)
+        if let day = state.lastFreezeDay { defaults.set(day, forKey: Self.streakFreezeDayKey) } else { defaults.removeObject(forKey: Self.streakFreezeDayKey) }
+    }
+
+    func loadSignatureReactionID() -> String? { defaults.object(forKey: Self.signatureReactionKey) as? String }
+    func saveSignatureReactionID(_ id: String) { defaults.set(id, forKey: Self.signatureReactionKey) }
 }
 
 /// Isolated store for tests and previews.
@@ -72,4 +119,15 @@ final class InMemoryStatsStore: StatsStoring {
 
     func load() -> PersistedStats { stats }
     func save(_ stats: PersistedStats) { self.stats = stats }
+
+    // MARK: Daily challenge & streak (feat-daily)
+    var dailyProgress = DailyProgress()
+    var streakState = StreakState()
+    var signatureReactionID: String?
+    func loadDailyProgress() -> DailyProgress { dailyProgress }
+    func saveDailyProgress(_ progress: DailyProgress) { dailyProgress = progress }
+    func loadStreakState() -> StreakState { streakState }
+    func saveStreakState(_ state: StreakState) { streakState = state }
+    func loadSignatureReactionID() -> String? { signatureReactionID }
+    func saveSignatureReactionID(_ id: String) { signatureReactionID = id }
 }

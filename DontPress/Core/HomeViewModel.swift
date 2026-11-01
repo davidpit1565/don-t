@@ -22,7 +22,14 @@ final class HomeViewModel {
     @ObservationIgnored private var reactions: ReactionEngine
     @ObservationIgnored private let haptics: HapticFeedback
 
-    init(service: PressService, reactions: ReactionEngine = ReactionEngine(), haptics: HapticFeedback? = nil) {
+    // MARK: Daily challenge & streak (feat-daily)
+    /// Today's challenge, progress and streak; nil when no tracker is injected.
+    private(set) var daily: DailySnapshot?
+    @ObservationIgnored private let dailyTracker: DailyTracker?
+
+    init(service: PressService, reactions: ReactionEngine = ReactionEngine(), haptics: HapticFeedback? = nil, daily: DailyTracker? = nil) {
+        self.dailyTracker = daily
+        self.daily = daily?.snapshot
         self.service = service
         self.reactions = reactions
         let haptics = haptics ?? NoHaptics()
@@ -63,6 +70,25 @@ final class HomeViewModel {
             reactionText = reactions.reaction(forPress: result.stats.currentRun).text
             haptics.press()
         }
+
+        // feat-daily: observe the accepted press (never affects the counters above).
+        if let dailyTracker {
+            let (before, after) = dailyTracker.recordPress()
+            daily = after
+            if let reaction = SignatureReaction.reaction(withText: reactionText) { dailyTracker.noteReaction(reaction) }
+            if before != .success, after.result == .success {
+                unlockMessage = [unlockMessage, "Daily challenge complete. Now stop."].compactMap { $0 }.joined(separator: " · ")
+            }
+        }
+    }
+
+    // MARK: Daily challenge & streak (feat-daily)
+
+    /// Re-reads the day (e.g. when the daily sheet opens after midnight).
+    func refreshDaily() { daily = dailyTracker?.snapshot }
+
+    var dailyShareContent: DailyShareContent? {
+        daily.flatMap { DailyShareContent.make(snapshot: $0) }
     }
 
     func dismissUnlockMessage() { unlockMessage = nil }
@@ -95,6 +121,12 @@ final class HomeViewModel {
     var unlockedAchievementCount: Int { achievementStatuses.filter(\.isUnlocked).count }
 
     var shareContent: ShareCardContent? {
-        ShareCardContent.make(personalBest: stats.personalBest)
+        ShareCardContent.make(
+            personalBest: stats.personalBest,
+            totalPresses: stats.totalPresses,
+            dayNumber: daily?.challenge.dayNumber,
+            streak: daily?.streak ?? 0,
+            signatureLine: dailyTracker?.signatureReaction?.text
+        )
     }
 }
