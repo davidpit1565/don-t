@@ -15,6 +15,9 @@ protocol StatsStoring: AnyObject {
     /// Last known Pro entitlement (StoreKit stays the source of truth; this avoids a flicker at launch).
     func loadIsPro() -> Bool
     func saveIsPro(_ value: Bool)
+    /// Whether synthesized sound effects play. Defaults to on.
+    func loadSoundEnabled() -> Bool
+    func saveSoundEnabled(_ value: Bool)
 }
 
 /// Lightweight local store. Missing, negative, or wrongly typed values read as 0.
@@ -23,6 +26,7 @@ final class UserDefaultsStatsStore: StatsStoring {
     static let totalKey = "dontpress.totalPresses"
     static let themeKey = "dontpress.buttonTheme"
     static let proKey = "dontpress.isPro"
+    static let soundKey = "dontpress.soundEnabled"
 
     private let defaults: UserDefaults
 
@@ -46,6 +50,8 @@ final class UserDefaultsStatsStore: StatsStoring {
     func saveThemeID(_ id: String) { defaults.set(id, forKey: Self.themeKey) }
     func loadIsPro() -> Bool { (defaults.object(forKey: Self.proKey) as? Bool) ?? false }
     func saveIsPro(_ value: Bool) { defaults.set(value, forKey: Self.proKey) }
+    func loadSoundEnabled() -> Bool { (defaults.object(forKey: Self.soundKey) as? Bool) ?? true }
+    func saveSoundEnabled(_ value: Bool) { defaults.set(value, forKey: Self.soundKey) }
 
     private func readCounter(_ key: String) -> Int {
         guard let raw = defaults.object(forKey: key) else { return 0 }
@@ -59,6 +65,7 @@ final class InMemoryStatsStore: StatsStoring {
     private var stats: PersistedStats
     private var themeID: String?
     private var isPro = false
+    private var soundEnabled = true
 
     init(_ stats: PersistedStats = PersistedStats(), themeID: String? = nil) {
         self.stats = stats
@@ -69,6 +76,8 @@ final class InMemoryStatsStore: StatsStoring {
     func saveThemeID(_ id: String) { themeID = id }
     func loadIsPro() -> Bool { isPro }
     func saveIsPro(_ value: Bool) { isPro = value }
+    func loadSoundEnabled() -> Bool { soundEnabled }
+    func saveSoundEnabled(_ value: Bool) { soundEnabled = value }
 
     func load() -> PersistedStats { stats }
     func save(_ stats: PersistedStats) { self.stats = stats }

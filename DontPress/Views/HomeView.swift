@@ -71,7 +71,7 @@ struct HomeView: View {
     private var header: some View {
         VStack(spacing: DS.Spacing.s) {
             HStack {
-                Color.clear.frame(width: 44, height: 44)
+                SoundToggleButton(model: model) // [audio] replaces the 44pt spacer
                 Spacer()
                 Text("DON'T PRESS")
                     .font(.footnote.weight(.heavy))
