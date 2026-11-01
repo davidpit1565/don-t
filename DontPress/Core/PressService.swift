@@ -23,6 +23,9 @@ final class PressService {
     func saveIsPro(_ value: Bool) { store.saveIsPro(value) }
     var savedSoundEnabled: Bool { store.loadSoundEnabled() }
     func saveSoundEnabled(_ value: Bool) { store.saveSoundEnabled(value) }
+    // Reactiondex
+    var savedDiscoveredReactionIDs: [String] { store.loadDiscoveredReactionIDs() }
+    func saveDiscoveredReactionIDs(_ ids: [String]) { store.saveDiscoveredReactionIDs(ids) }
 
     @discardableResult
     func registerPress() -> PressResult {

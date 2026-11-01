@@ -17,6 +17,7 @@ enum ReactionCatalog {
     ]
 
     static let all: [Reaction] = mild + sarcasm + concern + absurd + dramatic + legendary
+        + extended // Reactiondex expansion: ReactionCatalog+Extended.swift
 
     // 1–3: mild disapproval
     static let mild: [Reaction] = [

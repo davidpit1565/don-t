@@ -20,6 +20,9 @@ final class HomeViewModel {
 
     // [audio] Persisted mute setting; on by default.
     private(set) var isSoundEnabled: Bool
+    // Reactiondex: lines seen on this device, and whether the latest press revealed a new one.
+    private(set) var reactiondex: Reactiondex
+    private(set) var isNewDiscovery = false
 
     @ObservationIgnored private let service: PressService
     @ObservationIgnored private var reactions: ReactionEngine
@@ -36,6 +39,7 @@ final class HomeViewModel {
         self.isPro = service.savedIsPro
         self.selectedTheme = ButtonTheme.resolve(id: service.savedThemeID, stats: service.stats, isPro: service.savedIsPro)
         self.reactionText = ReactionCatalog.idle
+        self.reactiondex = Reactiondex(discoveredIDs: service.savedDiscoveredReactionIDs)
         haptics.prepare()
         // [audio]
         let sounds = sounds ?? NoSounds()
@@ -63,16 +67,15 @@ final class HomeViewModel {
             unlockMessage = parts.joined(separator: " · ")
         }
 
-        if let milestone = result.milestone {
-            reactionText = reactions.reaction(forMilestone: milestone).text
-            haptics.milestone()
-        } else if !newAchievements.isEmpty {
-            reactionText = reactions.reaction(forPress: result.stats.currentRun).text
+        // Special story/secret/ending line for this exact run count, else milestone, else tier line.
+        let line = reactions.storyAwareReaction(forRun: result.stats.currentRun, milestone: result.milestone)
+        reactionText = line.text
+        if result.milestone != nil || !newAchievements.isEmpty {
             haptics.milestone()
         } else {
-            reactionText = reactions.reaction(forPress: result.stats.currentRun).text
             haptics.press()
         }
+        recordDiscovery(line)
 
         // [audio] After counting; sound can never affect the stats.
         if result.milestone != nil { playSound(.milestone) }
@@ -98,6 +101,13 @@ final class HomeViewModel {
     }
 
     func dismissUnlockMessage() { unlockMessage = nil }
+
+    // MARK: Reactiondex
+
+    private func recordDiscovery(_ line: Reaction) {
+        isNewDiscovery = reactiondex.record(line.id)
+        if isNewDiscovery { service.saveDiscoveredReactionIDs(reactiondex.persistableIDs) }
+    }
 
     /// Called when the purchase state changes (purchase, restore, refund). Falls back to
     /// Classic if the selected style is no longer unlocked.

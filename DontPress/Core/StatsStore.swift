@@ -18,6 +18,9 @@ protocol StatsStoring: AnyObject {
     /// Whether synthesized sound effects play. Defaults to on.
     func loadSoundEnabled() -> Bool
     func saveSoundEnabled(_ value: Bool)
+    // Reactiondex: ids of reaction lines this device has seen.
+    func loadDiscoveredReactionIDs() -> [String]
+    func saveDiscoveredReactionIDs(_ ids: [String])
 }
 
 /// Lightweight local store. Missing, negative, or wrongly typed values read as 0.
@@ -27,6 +30,7 @@ final class UserDefaultsStatsStore: StatsStoring {
     static let themeKey = "dontpress.buttonTheme"
     static let proKey = "dontpress.isPro"
     static let soundKey = "dontpress.soundEnabled"
+    static let discoveredReactionsKey = "dontpress.discoveredReactions"
 
     private let defaults: UserDefaults
 
@@ -53,6 +57,14 @@ final class UserDefaultsStatsStore: StatsStoring {
     func loadSoundEnabled() -> Bool { (defaults.object(forKey: Self.soundKey) as? Bool) ?? true }
     func saveSoundEnabled(_ value: Bool) { defaults.set(value, forKey: Self.soundKey) }
 
+    // Reactiondex. A wrongly typed value reads as empty.
+    func loadDiscoveredReactionIDs() -> [String] {
+        (defaults.object(forKey: Self.discoveredReactionsKey) as? [String]) ?? []
+    }
+    func saveDiscoveredReactionIDs(_ ids: [String]) {
+        defaults.set(Array(Set(ids)).sorted(), forKey: Self.discoveredReactionsKey)
+    }
+
     private func readCounter(_ key: String) -> Int {
         guard let raw = defaults.object(forKey: key) else { return 0 }
         if let value = raw as? Int { return Swift.max(value, 0) }
@@ -66,6 +78,7 @@ final class InMemoryStatsStore: StatsStoring {
     private var themeID: String?
     private var isPro = false
     private var soundEnabled = true
+    private var discoveredReactionIDs: [String] = []
 
     init(_ stats: PersistedStats = PersistedStats(), themeID: String? = nil) {
         self.stats = stats
@@ -78,6 +91,8 @@ final class InMemoryStatsStore: StatsStoring {
     func saveIsPro(_ value: Bool) { isPro = value }
     func loadSoundEnabled() -> Bool { soundEnabled }
     func saveSoundEnabled(_ value: Bool) { soundEnabled = value }
+    func loadDiscoveredReactionIDs() -> [String] { discoveredReactionIDs }
+    func saveDiscoveredReactionIDs(_ ids: [String]) { discoveredReactionIDs = Array(Set(ids)).sorted() }
 
     func load() -> PersistedStats { stats }
     func save(_ stats: PersistedStats) { self.stats = stats }
