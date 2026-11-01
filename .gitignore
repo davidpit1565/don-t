@@ -4,3 +4,6 @@ xcuserdata/
 DerivedData/
 *.xcresult
 .DS_Store
+
+# agent worktrees (local only)
+.claude/worktrees/
