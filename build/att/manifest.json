@@ -1,0 +1,17 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "A765D722-4A0B-4A3A-99B7-112DC46F1647",
+        "deviceName" : "iPhone 16 Pro Max",
+        "exportedFileName" : "00EAE3A2-40D1-44DA-BF16-FB51CC77CB45.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "fit_0_B17CEF02-ACD1-45A4-8C9D-F145229C419D.png",
+        "timestamp" : 1793575671.896
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testEverythingFitsOnOneScreen()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testEverythingFitsOnOneScreen"
+  }
+]
