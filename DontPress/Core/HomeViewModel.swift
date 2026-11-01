@@ -63,7 +63,8 @@ final class HomeViewModel {
         self.isSoundEnabled = service.savedSoundEnabled
         if isSoundEnabled { sounds.prepare() }
         // A saved Pro toy without Pro (e.g. after a refund) falls back to the free button.
-        if self.toys.selectedKind.requiresPro && !isPro { self.toys.select(.button) }
+        // (Progression: a toy earned by play stays selected — see `isToyUnlocked`.)
+        if !isToyUnlocked(self.toys.selectedKind) { self.toys.select(.button) }
     }
 
     /// One accepted press. Counting happens first; reaction and haptics cannot affect it.
@@ -78,10 +79,13 @@ final class HomeViewModel {
         let newAchievements = Achievement.newlyUnlocked(before: before, after: result.stats)
         // With Pro everything is already unlocked, so earning a style is not news.
         let newThemes = isPro ? [] : ButtonTheme.newlyUnlocked(before: before, after: result.stats)
-        if !newAchievements.isEmpty || !newThemes.isEmpty {
+        // Progression: toys earned by play (exactly once per crossing; with Pro it is not news).
+        let newToys = isPro ? [] : ProgressionRules.newlyUnlockedByPlay(before: before, after: result.stats)
+        if !newAchievements.isEmpty || !newThemes.isEmpty || !newToys.isEmpty {
             var parts: [String] = []
             if !newAchievements.isEmpty { parts.append("Achievement: " + newAchievements.map(\.title).joined(separator: ", ")) }
             if !newThemes.isEmpty { parts.append("New button style: " + newThemes.map(\.name).joined(separator: ", ")) }
+            if let toyLine = ProgressionRules.unlockMessage(for: newToys) { parts.append(toyLine) }
             unlockMessage = parts.joined(separator: " · ")
         }
 
@@ -98,7 +102,7 @@ final class HomeViewModel {
         // [audio] After counting; sound can never affect the stats.
         if result.milestone != nil { playSound(.milestone) }
         else if !newAchievements.isEmpty { playSound(.achievement) }
-        else if !newThemes.isEmpty { playSound(.unlock) }
+        else if !newThemes.isEmpty || !newToys.isEmpty { playSound(.unlock) }
         else { playSound(.press(forRun: result.stats.currentRun)) }
 
         // Set-pieces: consulted after counting, so they can never affect it.
@@ -178,14 +182,18 @@ final class HomeViewModel {
         service.saveIsPro(value)
         selectedTheme = ButtonTheme.resolve(id: selectedTheme.id, stats: stats, isPro: value)
         if selectedTheme.id != service.savedThemeID { service.saveThemeID(selectedTheme.id) }
-        if !value && toys.selectedKind.requiresPro { toys.select(.button) }
+        if !value && !isToyUnlocked(toys.selectedKind) { toys.select(.button) }
     }
 
-    // MARK: Pro toys
+    // MARK: Toy progression (Pro or play threshold; rules in ProgressionRules)
 
-    func isToyUnlocked(_ kind: ToyKind) -> Bool { !kind.requiresPro || isPro }
+    func toyUnlockState(_ kind: ToyKind) -> ToyUnlockState {
+        ProgressionRules.unlockState(for: kind, stats: stats, isPro: isPro)
+    }
 
-    /// Selects a toy if it is unlocked; returns false for a Pro toy without Pro (show the offer).
+    func isToyUnlocked(_ kind: ToyKind) -> Bool { toyUnlockState(kind).isUnlocked }
+
+    /// Selects a toy if it is unlocked; returns false for a locked toy (show the Pro offer).
     @discardableResult
     func selectToy(_ kind: ToyKind) -> Bool {
         guard isToyUnlocked(kind) else { return false }
