@@ -70,12 +70,12 @@ New in 1.1: the button fights back. Hatch creatures from an egg, pop a balloon, 
 The button has had enough.
 
 • The button fights back: at certain milestones it stops being polite. Short set-pieces you have to see for yourself.
-• New toys: an egg that hatches creatures, and a balloon that pops. Same rule applies.
+• New toys: an egg that hatches creatures, and a balloon that pops. Both unlock by playing (300 and 1,500 total presses). Same rule applies.
 • Daily challenge: one new challenge every day, with a day streak to protect. Made on your iPhone, works offline.
 • Reactiondex: collect every reaction and creature you discover.
 • Sound: new synthesized sounds, with an on/off switch.
 • A better share card for your personal best.
-• Pro now includes the Egg and the Balloon toys and four alternate app icons, plus all button styles right away
+• Pro now includes the Egg and the Balloon right away (they also unlock free by playing), the Pinata toy (needs Pro and 5,000 total presses), four alternate app icons, and all button styles right away
 
 Still no account, no ads, no tracking.
 ```
@@ -92,7 +92,7 @@ WHAT YOU CAN DO
 • Press the button. Real haptics, a satisfying press, and synthesized sounds (switch them off any time).
 • Watch it escalate: 100+ hand-written reactions in tiers that change the longer your run goes.
 • Survive the milestones: at certain press counts the button stops being polite and stages a short set-piece.
-• Try the other toys: an egg that hatches creatures, and a balloon that pops. Same rule. Same bad decisions.
+• Try the other toys: an egg that hatches creatures (unlocks at 300 total presses), and a balloon that pops (1,500). Same rule. Same bad decisions.
 • Play the daily challenge: one new challenge every day, plus a day streak to protect.
 • Fill your Reactiondex: every reaction and creature you discover is collected.
 • Unlock 12 achievements and 5 button styles (Classic, Blue Mistake, Stealth, Radioactive, Gold Standard) by playing.
@@ -100,7 +100,7 @@ WHAT YOU CAN DO
 • Share a clean achievement card with your real personal best through the standard iOS share sheet.
 
 OPTIONAL PRO
-One optional one-time purchase, no subscription: the Egg and the Balloon toys, four alternate app icons, and every button style right away. The app shows exactly what Pro includes, and the price, before you buy. The big button, the milestone moments, the daily challenge, the streak, the Reactiondex, the share card and every style you earn by playing stay free.
+One optional one-time purchase, no subscription: the Egg and the Balloon right away (both can also be earned free by pressing: 300 and 1,500 total presses), the Pinata toy (needs Pro and 5,000 total presses), four alternate app icons, and every button style right away. The app shows exactly what Pro includes, and the price, before you buy. The big button, the milestone moments, the daily challenge, the streak, the Reactiondex, the share card and every style you earn by playing stay free.
 
 PRIVATE BY DESIGN
 Works fully offline. No account, no ads, no tracking, no analytics. Your progress stays on your iPhone. There are no global rankings: the only person you are competing with is you.
@@ -129,7 +129,7 @@ What to try (about 3 minutes):
 6. Collection: tap the trophy icon for 12 achievements and 5 button styles that unlock by playing.
 7. Share: tap "Share personal best" to render an achievement image with the real number and open the iOS share sheet.
 
-In-app purchase: one non-consumable, com.davidpitchkhadze.dontpress.pro. Pro includes the Egg and the Balloon toys, four alternate app icons and all button styles; the offer opens when you tap a locked toy (Egg/Balloon in the bottom picker), a locked style or icon in Collection (trophy), or the Pro row. Restore Purchases is on the same screen. Please use a Sandbox Apple ID to test.
+In-app purchase: one non-consumable, com.davidpitchkhadze.dontpress.pro. Pro includes the Egg and the Balloon toys right away, the Pinata toy (also needs 5,000 total presses), four alternate app icons and all button styles. The Egg unlocks free at 300 total presses and the Balloon at 1,500. The offer opens when you tap a locked toy (Egg/Balloon/Pinata in the bottom picker), a locked style or icon in Collection (trophy), or the Pro row. Restore Purchases is on the same screen. Please use a Sandbox Apple ID to test.
 
 Current Run starts at zero on every cold launch by design. All progress is stored on the device (UserDefaults). The app collects no data, requests no permissions and sends no notifications. Privacy Policy and Support are linked at the bottom of the main screen.
 ```
@@ -182,7 +182,7 @@ Poster frame: choose the frame at about 5 s (mid set-piece), which is what peopl
 ## 9. Release checklist for 1.1
 
 - [ ] 1.0 approved (or rejection notes addressed) before submitting 1.1; do not stack changes on an unresolved rejection.
-- [ ] Bump `MARKETING_VERSION` to 1.1 and `CURRENT_PROJECT_VERSION` to a new build number (code agents / owner).
+- [x] `MARKETING_VERSION` is 1.1 and `CURRENT_PROJECT_VERSION` is 3 on branch claude/v1.1 (confirm the build number is higher than every build already uploaded).
 - [ ] Every claim in sections 3 to 6 checked against the final build; `[OWNER: ...]` placeholders filled or removed.
 - [ ] `docs/privacy.md` effective date set; App Privacy answer still "Data Not Collected" (re-check: no new SDKs, no network calls).
 - [ ] `PrivacyInfo.xcprivacy` still accurate (UserDefaults `CA92.1`; add any new required-reason API the 1.1 code uses).
@@ -193,6 +193,6 @@ Poster frame: choose the frame at about 5 s (mid set-piece), which is what peopl
 
 
 ## Pro pricing (owner decision)
-- Pro content in 1.1: Egg + Balloon toys, 4 alternate app icons, all 5 button styles right away (styles can still be earned).
+- Pro content in 1.1: Egg + Balloon toys right away (earnable free at 300 / 1,500 total presses), Pinata toy (Pro AND 5,000 total presses), 4 alternate app icons, all 5 button styles right away (styles can still be earned).
 - Suggested price: EUR 3.99 (one-time). Raise it in App Store Connect > In-App Purchases > DON'T PRESS Pro > Price Schedule when 1.1 is released. Existing buyers keep Pro (same product ID). No data supports one price over another; treat it as a test.
 - Update the in-app-purchase review screenshot after the change (the offer now lists the toys and icons).

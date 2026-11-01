@@ -38,7 +38,7 @@ Ordered by how visible and "shareable" each one is relative to build cost:
    15-second clip.
 2. **Animated button skins.** Styles that move: a pulsing core, a cracked surface that spreads with the run, a
    melting button. Distinct from the 5 static styles, which stay free.
-3. **Extra toys.** One or two Pro-only toys beyond the free egg and balloon (ideas: a self-destruct lever, a
+3. **Extra toys.** One or two Pro-only toys beyond the egg and balloon (earnable free by play; the piñata shipped in 1.1 as Pro + 5,000 presses) (ideas: a self-destruct lever, a
    jack-in-the-box). Each toy is a feature a reviewer can see, so it also supports 4.2.
 4. **Reactiondex extras.** A Pro-only page of bonus reactions/creatures, alternate "shiny" creature colors, and a
    collection filter. The base Reactiondex must remain fully completable for free; Pro adds *extra* entries,
