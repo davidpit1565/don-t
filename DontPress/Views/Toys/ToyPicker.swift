@@ -4,7 +4,7 @@ import SwiftUI
 /// Taps on any toy still go through the one counting path.
 struct ToyPicker: View {
     var model: HomeViewModel
-    /// Called when a Pro toy is tapped without Pro.
+    /// Called when a locked toy is tapped (not yet earned by play, no Pro): show the Pro offer.
     var onLockedTap: () -> Void = {}
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -12,7 +12,9 @@ struct ToyPicker: View {
         HStack(spacing: DS.Spacing.s) {
             ForEach(ToyKind.allCases) { kind in
                 let selected = model.toys.selectedKind == kind
-                let locked = !model.isToyUnlocked(kind)
+                let unlockState = model.toyUnlockState(kind)
+                let locked = !unlockState.isUnlocked
+                let progressLabel = ProgressionRules.progressLabel(for: unlockState)
                 Button {
                     if locked {
                         onLockedTap()
@@ -23,10 +25,20 @@ struct ToyPicker: View {
                     HStack(spacing: DS.Spacing.xs + 2) {
                         ToyGlyph(kind: kind, theme: model.selectedTheme)
                             .frame(width: 20, height: 20)
-                        Text(kind.title)
-                            .font(.caption.weight(.semibold))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text(kind.title)
+                                .font(.caption.weight(.semibold))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+                            // Progression: how far this toy is from being earned by play.
+                            if let progressLabel {
+                                Text(progressLabel)
+                                    .font(.caption2.weight(.medium).monospacedDigit())
+                                    .foregroundStyle(DS.Palette.textSecondary)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
+                            }
+                        }
                         if locked {
                             Image(systemName: "lock.fill")
                                 .font(.system(size: 9, weight: .bold))
@@ -38,11 +50,19 @@ struct ToyPicker: View {
                     .frame(minWidth: 44, minHeight: 44)
                     .background(selected ? DS.Palette.surface : .clear, in: Capsule())
                     .overlay(Capsule().strokeBorder(selected ? DS.Palette.textSecondary.opacity(0.6) : DS.Palette.border, lineWidth: 1))
+                    .overlay(alignment: .bottom) {
+                        if progressLabel != nil {
+                            ToyUnlockProgressBar(fraction: ProgressionRules.fractionToUnlock(for: kind, stats: model.stats))
+                                .padding(.horizontal, DS.Spacing.m)
+                                .padding(.bottom, 5)
+                                .accessibilityHidden(true)
+                        }
+                    }
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("\(kind.title) toy")
                 .accessibilityHint("Puts the \(kind.title.lowercased()) in the middle of the screen. Taps on it still count.")
-                .accessibilityValue(locked ? "Locked. Included with Pro" : "")
+                .accessibilityValue(ProgressionRules.accessibilityValue(for: unlockState))
                 .accessibilityAddTraits(selected ? [.isSelected] : [])
                 .accessibilityIdentifier("toyPicker.\(kind.rawValue)")
             }
@@ -50,6 +70,23 @@ struct ToyPicker: View {
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Tap toy")
         .accessibilityIdentifier("toyPicker")
+    }
+}
+
+/// Hairline progress towards earning a locked toy by play. Not colour-only: the chip also shows "123/300".
+private struct ToyUnlockProgressBar: View {
+    var fraction: Double
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack(alignment: .leading) {
+                Capsule().fill(DS.Palette.border)
+                Capsule()
+                    .fill(DS.Palette.textSecondary)
+                    .frame(width: proxy.size.width * min(max(fraction, 0), 1))
+            }
+        }
+        .frame(height: 2)
     }
 }
 
