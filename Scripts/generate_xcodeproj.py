@@ -62,6 +62,8 @@ proj_release = dict(proj_common, **{
 
 app_common = {
     "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
+    "ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES": '"AppIcon-Cobalt AppIcon-Stealth AppIcon-Radioactive AppIcon-Gold"',
+    "ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS": "YES",
     "ENABLE_PREVIEWS": "YES",
     "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentColor",
     "CODE_SIGN_STYLE": "Automatic",
