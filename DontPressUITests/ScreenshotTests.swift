@@ -73,6 +73,23 @@ final class ScreenshotTests: XCTestCase {
         shot(app, "11-theme-cobalt")
     }
 
+    /// The main screen must fit on one screen without scrolling (any iPhone size).
+    func testEverythingFitsOnOneScreen() {
+        let app = launch(["-UITestSeedBest", "1234", "-UITestSeedTotal", "98765"])
+        XCTAssertTrue(app.buttons["pressButton"].waitForExistence(timeout: 10))
+        for _ in 0..<3 { app.buttons["pressButton"].tap() }
+        XCTAssertEqual(app.scrollViews.count, 0, "no ScrollView: nothing may need scrolling")
+        let window = app.windows.firstMatch.frame
+        for id in ["collectionButton", "pressButton", "currentRun", "personalBest", "totalPresses", "shareButton", "privacyLink", "supportLink"] {
+            let element = app.descendants(matching: .any)[id].firstMatch
+            XCTAssertTrue(element.exists, id)
+            XCTAssertTrue(window.contains(element.frame), "\(id) must be fully on screen: \(element.frame) vs \(window)")
+        }
+        let button = app.buttons["pressButton"].frame
+        XCTAssertGreaterThanOrEqual(button.width, 140, "button must stay large")
+        shot(app, "fit")
+    }
+
     func testCaptureLargeNumbers() {
         let app = launch(["-UITestSeedBest", "9223372036854775000", "-UITestSeedTotal", "9223372036854775000"])
         XCTAssertTrue(app.buttons["pressButton"].waitForExistence(timeout: 10))

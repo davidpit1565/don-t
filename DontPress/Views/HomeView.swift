@@ -12,23 +12,18 @@ struct HomeView: View {
 
     var body: some View {
         GeometryReader { proxy in
-            ScrollView {
-                VStack(spacing: DS.Spacing.l) {
-                    header
-                    Spacer(minLength: 0)
-                    pressButton(available: proxy.size)
-                    reactionLine
-                    Spacer(minLength: 0)
-                    stats
-                    shareButton
-                    legalLinks
+            if typeSize.isAccessibilitySize {
+                // Huge accessibility text cannot fit one screen: allow scrolling only here.
+                ScrollView {
+                    content(fixedDiameter: min(proxy.size.width - DS.Spacing.l * 2, 240))
+                        .frame(maxWidth: .infinity, minHeight: proxy.size.height)
                 }
-                .padding(.horizontal, DS.Spacing.l)
-                .padding(.vertical, DS.Spacing.m)
-                .frame(maxWidth: 520)
-                .frame(maxWidth: .infinity, minHeight: proxy.size.height)
+                .scrollBounceBehavior(.basedOnSize)
+            } else {
+                // Everything on ONE screen, no scrolling: the button takes the space that is left.
+                content(fixedDiameter: nil)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .scrollBounceBehavior(.basedOnSize)
         }
         .overlay(alignment: .top) { unlockBanner }
         .sheet(isPresented: $showCollection) { CollectionView(model: model, proStore: proStore) }
@@ -38,6 +33,36 @@ struct HomeView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text("Your stats are unchanged. Try again in a moment.")
+        }
+    }
+
+    // MARK: Layout
+
+    private func content(fixedDiameter: CGFloat?) -> some View {
+        VStack(spacing: DS.Spacing.m) {
+            header
+            buttonArea(fixedDiameter: fixedDiameter)
+            reactionLine
+            stats
+            shareButton
+            legalLinks
+        }
+        .padding(.horizontal, DS.Spacing.l)
+        .padding(.vertical, DS.Spacing.s)
+        .frame(maxWidth: 520)
+    }
+
+    @ViewBuilder
+    private func buttonArea(fixedDiameter: CGFloat?) -> some View {
+        if let fixedDiameter {
+            pressButton(diameter: fixedDiameter)
+        } else {
+            GeometryReader { geo in
+                let diameter = max(min(geo.size.width, geo.size.height, 340), 120)
+                pressButton(diameter: diameter)
+                    .frame(width: geo.size.width, height: geo.size.height)
+            }
+            .frame(minHeight: 140)
         }
     }
 
@@ -72,10 +97,8 @@ struct HomeView: View {
         }
     }
 
-    private func pressButton(available: CGSize) -> some View {
-        let base = min(available.width - DS.Spacing.l * 2, available.height * 0.38, 340)
-        let diameter = max(base, 180)
-        return Button {
+    private func pressButton(diameter: CGFloat) -> some View {
+        Button {
             model.press()
         } label: {
             BigRedButtonLabel(diameter: diameter, theme: model.selectedTheme)
@@ -98,7 +121,7 @@ struct HomeView: View {
             .font(.title3.weight(.semibold))
             .foregroundStyle(DS.Palette.textPrimary)
             .multilineTextAlignment(.center)
-            .frame(maxWidth: .infinity, minHeight: 60, alignment: .top)
+            .frame(maxWidth: .infinity, minHeight: 56, alignment: .top)
             .fixedSize(horizontal: false, vertical: true)
             .contentTransition(.opacity)
             .animation(.easeOut(duration: 0.12), value: model.reactionText)
