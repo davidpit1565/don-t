@@ -6,9 +6,9 @@ import LinkPresentation
 enum SharePresenter {
     @MainActor
     @discardableResult
-    static func present(image: UIImage, onFinish: @escaping () -> Void) -> Bool {
+    static func present(image: UIImage, title: String = "DON'T PRESS: my personal best", onFinish: @escaping () -> Void) -> Bool {
         guard let presenter = topViewController() else { return false }
-        let controller = UIActivityViewController(activityItems: [ShareItem(image: image)], applicationActivities: nil)
+        let controller = UIActivityViewController(activityItems: [ShareItem(image: image, title: title)], applicationActivities: nil)
         controller.completionWithItemsHandler = { _, _, _, _ in
             onFinish()   // fires for both completion and cancellation
         }
@@ -35,9 +35,11 @@ enum SharePresenter {
 /// Supplies the image itself (not text) to the share sheet.
 private final class ShareItem: NSObject, UIActivityItemSource {
     let image: UIImage
+    let title: String
 
-    init(image: UIImage) {
+    init(image: UIImage, title: String) {
         self.image = image
+        self.title = title
     }
 
     func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any { image }
@@ -46,7 +48,7 @@ private final class ShareItem: NSObject, UIActivityItemSource {
 
     func activityViewControllerLinkMetadata(_ activityViewController: UIActivityViewController) -> LPLinkMetadata? {
         let metadata = LPLinkMetadata()
-        metadata.title = "DON'T PRESS: my personal best"
+        metadata.title = title
         metadata.imageProvider = NSItemProvider(object: image)
         return metadata
     }

@@ -7,10 +7,16 @@ struct CollectionView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showPro = false
     @State private var showReactiondex = false
+    @State private var showDaily = false   // feat-daily
 
     var body: some View {
         NavigationStack {
             List {
+                // feat-daily: entry point to the daily challenge sheet.
+                if model.daily != nil {
+                    Section { dailyRow }
+                }
+
                 Section {
                     ForEach(model.themeStatuses) { status in
                         themeRow(status)
@@ -53,6 +59,39 @@ struct CollectionView: View {
         .preferredColorScheme(.dark)
         .sheet(isPresented: $showPro) { ProView(proStore: proStore) }
         .sheet(isPresented: $showReactiondex) { ReactiondexView(dex: model.reactiondex) }
+        .sheet(isPresented: $showDaily) { DailyChallengeView(model: model) }   // feat-daily
+    }
+
+    // feat-daily
+    private var dailyRow: some View {
+        Button { showDaily = true } label: {
+            HStack(spacing: DS.Spacing.m) {
+                Image(systemName: "calendar")
+                    .font(.title3)
+                    .foregroundStyle(DS.Palette.highlight)
+                    .frame(width: 40)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Daily challenge").font(.body.weight(.semibold)).foregroundStyle(DS.Palette.textPrimary)
+                    Text(dailySubtitle).font(.footnote).foregroundStyle(DS.Palette.textSecondary)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").font(.footnote).foregroundStyle(DS.Palette.textSecondary)
+            }
+            .frame(minHeight: 44)
+        }
+        .listRowBackground(DS.Palette.surface)
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("dailyRow")
+    }
+
+    private var dailySubtitle: String {
+        guard let daily = model.daily else { return "" }
+        let streak = daily.streak == 1 ? "1-day streak" : "\(daily.streak.formatted())-day streak"
+        switch daily.result {
+        case .success: return "Done for today · \(streak)"
+        case .fail: return "Failed today · \(streak)"
+        case .pending: return "In progress · \(streak)"
+        }
     }
 
     // MARK: Reactiondex
