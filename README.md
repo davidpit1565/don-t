@@ -8,6 +8,9 @@ counts, buzzes, and earns a hand-written reaction. Fully local and offline, with
 - **Spec:** [`CLAUDE.md`](./CLAUDE.md)
 - **Release notes and App Store checklist:** [`docs/RELEASE.md`](./docs/RELEASE.md)
 - **Privacy policy:** [`docs/privacy.md`](./docs/privacy.md) · **Support:** [`docs/support.md`](./docs/support.md)
+- **Version 1.1 planning (drafts):** [`docs/RELEASE_1_1.md`](./docs/RELEASE_1_1.md) (store copy) ·
+  [`docs/PRO_2_0.md`](./docs/PRO_2_0.md) · [`docs/NAME_OPTIONS.md`](./docs/NAME_OPTIONS.md) ·
+  [`docs/LAUNCH_PLAYBOOK.md`](./docs/LAUNCH_PLAYBOOK.md)
 
 ## Features
 
