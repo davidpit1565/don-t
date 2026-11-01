@@ -234,7 +234,7 @@ final class V11FeatureTests: XCTestCase {
 
         XCTAssertEqual(app.scrollViews.count, 0, "no ScrollView: nothing may need scrolling")
         let window = app.windows.firstMatch.frame
-        for id in ["toyPicker", "toyPicker.button", "toyPicker.egg", "toyPicker.balloon",
+        for id in ["toyPicker", "toyPicker.button", "toyPicker.egg", "toyPicker.balloon", "toyPicker.pinata",
                    "soundToggle", "pressButton", "shareButton", "privacyLink"] {
             let item = element(app, id)
             XCTAssertTrue(item.exists, "\(id) should exist")
