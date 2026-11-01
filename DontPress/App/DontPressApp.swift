@@ -10,7 +10,7 @@ struct DontPressApp: App {
     init() {
         let configuration = LaunchConfiguration()
         let service = PressService(store: configuration.makeStore())
-        let model = HomeViewModel(service: service, haptics: UIKitHaptics())
+        let model = HomeViewModel(service: service, haptics: UIKitHaptics(), sounds: AudioEngineSounds())
         let proStore = ProStore(cachedIsPro: service.savedIsPro)
         proStore.onChange = { [weak model] isPro in model?.setPro(isPro) }
         _model = State(initialValue: model)
