@@ -6,6 +6,8 @@ struct HomeView: View {
     @State private var isSharing = false
     @State private var shareError = false
     @State private var showCollection = false
+    /// Set-pieces: plays the haptic plan of the active set-piece (see SetPieceEffects.swift).
+    @State private var setPieceHaptics = SetPieceHaptics()
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @Environment(\.dynamicTypeSize) private var typeSize
@@ -81,6 +83,12 @@ struct HomeView: View {
             BigRedButtonLabel(diameter: diameter, theme: model.selectedTheme)
         }
         .buttonStyle(PlungerButtonStyle(diameter: diameter, theme: model.selectedTheme))
+        // Set-pieces ("the button fights back"): visual only; taps keep counting underneath.
+        .setPieceEffects(
+            model.activeSetPiece, diameter: diameter,
+            onHaptic: { setPieceHaptics.play($0) },
+            onFinished: { model.finishSetPiece(id: $0) }
+        )
         .accessibilityLabel("Don't press")
         .accessibilityHint("Double tap to press it anyway. Adds one to your run.")
         .accessibilityValue(buttonAccessibilityValue)
