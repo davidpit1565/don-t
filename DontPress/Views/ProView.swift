@@ -24,7 +24,8 @@ struct ProView: View {
                         .accessibilityAddTraits(.isHeader)
 
                     VStack(alignment: .leading, spacing: DS.Spacing.m) {
-                        point("The Egg and the Balloon toys")
+                        point("The Egg and the Balloon toys, instantly")
+                        point("The Piñata: Pro, plus 5,000 total presses to hang it")
                         point("All 5 button styles right away")
                         point("4 alternate app icons")
                         point("One-time purchase. No subscription")

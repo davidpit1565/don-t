@@ -369,7 +369,7 @@ final class ProNudgeSchedulerTests: XCTestCase {
     }
 
     func testProIncludesMatchesProViewClaims() {
-        XCTAssertEqual(ProNudgeCopy.proIncludes.count, 4)
+        XCTAssertEqual(ProNudgeCopy.proIncludes.count, 5)
         XCTAssertTrue(ProNudgeCopy.proIncludes.contains("One-time purchase. No subscription"))
     }
 

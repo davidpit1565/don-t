@@ -13,7 +13,8 @@ enum ProNudgeCopy {
 
     /// Mirrors ProView's feature list. Keep the two in sync.
     static let proIncludes = [
-        "The Egg and the Balloon toys",
+        "The Egg and the Balloon toys, instantly",
+        "The Piñata: Pro, plus 5,000 total presses to hang it",
         "All 5 button styles right away",
         "4 alternate app icons",
         "One-time purchase. No subscription",
