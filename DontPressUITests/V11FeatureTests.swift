@@ -154,19 +154,17 @@ final class V11FeatureTests: XCTestCase {
 
     // MARK: 3. Set-piece
 
-    func testSetPieceAtTwentyFivePlaysAndTapsKeepCounting() {
+    func testTapsDuringTheFlinchSetPieceAllCount() {
         let app = launch()
         let button = pressButton(app)
-        for _ in 0..<25 { button.tap() }
-
-        // The caption is drawn as an overlay of the button, so iOS merges it into the button's
-        // accessibility element; it is verified visually by ScreenshotTests (v11-setpiece-25).
-        // What must hold here: the set-piece never blocks or loses a tap.
-
-        // Taps during the set-piece still count.
+        for _ in 0..<10 { button.tap() }
+        // Run 10 starts "The Flinch": the button shrinks but stays in place and tappable,
+        // so every tap during it must count. (At 25 the button deliberately runs off-screen,
+        // so taps there can miss it; that is the gag, not lost counting.)
+        // The caption is part of the button's accessibility element; ScreenshotTests show it.
         for _ in 0..<3 { button.tap() }
-        XCTAssertEqual(count(app, "currentRun"), 28, "taps during a set-piece must all count")
-        XCTAssertEqual(count(app, "totalPresses"), 28)
+        XCTAssertEqual(count(app, "currentRun"), 13, "taps during a set-piece must all count")
+        XCTAssertEqual(count(app, "totalPresses"), 13)
     }
 
     // MARK: 4. Daily challenge and Reactiondex
