@@ -129,7 +129,7 @@ struct SetPieceEffectModifier: ViewModifier {
     @MainActor
     private func play() async {
         // A new (or no) set-piece: start from a clean slate without animating the reset.
-        var transaction = Transaction()
+        var transaction = SwiftUI.Transaction()
         transaction.disablesAnimations = true
         withTransaction(transaction) { visual = SetPieceVisualState() }
 
@@ -187,7 +187,7 @@ struct SetPieceEffectModifier: ViewModifier {
         case .rotation(let degrees):
             if hidden {
                 // Nobody can see it: snap, so the reappearance is not a reverse spin.
-                var transaction = Transaction()
+                var transaction = SwiftUI.Transaction()
                 transaction.disablesAnimations = true
                 withTransaction(transaction) { visual.rotation = degrees }
             } else {

@@ -2,7 +2,7 @@ name: One-screen layout check
 
 on:
   push:
-    branches: [claude/one-screen-layout]
+    branches: [claude/one-screen-layout, claude/v1.1]
   workflow_dispatch:
 
 permissions:
