@@ -88,7 +88,8 @@ struct CollectionView: View {
 
     private var dailySubtitle: String {
         guard let daily = model.daily else { return "" }
-        let streak = daily.streak == 1 ? "1-day streak" : "\(daily.streak.formatted())-day streak"
+        let streak = daily.streak == 0 ? "No streak yet"
+            : daily.streak == 1 ? "1-day streak" : "\(daily.streak.formatted())-day streak"
         switch daily.result {
         case .success: return "Done for today · \(streak)"
         case .fail: return "Failed today · \(streak)"

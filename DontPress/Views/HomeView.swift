@@ -44,7 +44,10 @@ struct HomeView: View {
         VStack(spacing: DS.Spacing.m) {
             header
             buttonArea(fixedDiameter: fixedDiameter)
-            reactionLine
+            VStack(spacing: DS.Spacing.xs) {
+                reactionLine
+                newDiscoveryMarker
+            }
             stats
             ToyPicker(model: model)   // Toys: button / egg / balloon (Views/Toys)
             shareButton
@@ -147,26 +150,25 @@ struct HomeView: View {
             .contentTransition(.opacity)
             .animation(.easeOut(duration: 0.12), value: model.reactionText)
             .accessibilityIdentifier("reactionLabel")
-            .overlay(alignment: .bottom) { newDiscoveryMarker }
     }
 
     /// Reactiondex: small "NEW" tag under the reaction when this press revealed an unseen line.
-    /// Hangs below the line (into the stack spacing) so it never changes the layout.
-    @ViewBuilder
+    /// It always reserves its (small) space and only fades in, so it can never overlap a
+    /// two-line reaction and never makes the layout jump.
     private var newDiscoveryMarker: some View {
-        if model.isNewDiscovery && model.stats.currentRun > 0 {
-            Text("NEW")
-                .font(.caption2.weight(.heavy))
-                .tracking(1.5)
-                .foregroundStyle(DS.Palette.textPrimary)
-                .padding(.horizontal, DS.Spacing.s)
-                .padding(.vertical, 2)
-                .background(DS.Palette.darkRed, in: Capsule())
-                .alignmentGuide(.bottom) { $0[.top] }
-                .transition(.opacity)
-                .accessibilityLabel("New line discovered")
-                .accessibilityIdentifier("newDiscoveryMarker")
-        }
+        let isVisible = model.isNewDiscovery && model.stats.currentRun > 0
+        return Text("NEW")
+            .font(.caption2.weight(.heavy))
+            .tracking(1.5)
+            .foregroundStyle(DS.Palette.textPrimary)
+            .padding(.horizontal, DS.Spacing.s)
+            .padding(.vertical, 2)
+            .background(DS.Palette.darkRed, in: Capsule())
+            .opacity(isVisible ? 1 : 0)
+            .animation(.easeOut(duration: 0.15), value: isVisible)
+            .accessibilityHidden(!isVisible)
+            .accessibilityLabel("New line discovered")
+            .accessibilityIdentifier("newDiscoveryMarker")
     }
 
     @ViewBuilder
@@ -228,7 +230,7 @@ struct HomeView: View {
                 .padding(.vertical, DS.Spacing.s)
                 .background(DS.Palette.surface, in: Capsule())
                 .overlay(Capsule().strokeBorder(DS.Palette.border, lineWidth: 1))
-                .padding(.top, DS.Spacing.s)
+                .padding(.top, 56)   // below the header row (sound / wordmark / trophy)
                 .padding(.horizontal, DS.Spacing.l)
                 .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
                 .accessibilityIdentifier("unlockBanner")

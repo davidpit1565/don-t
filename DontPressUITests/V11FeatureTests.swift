@@ -154,20 +154,19 @@ final class V11FeatureTests: XCTestCase {
 
     // MARK: 3. Set-piece
 
-    func testSetPieceAtTenPlaysAndTapsKeepCounting() {
+    func testSetPieceAtTwentyFivePlaysAndTapsKeepCounting() {
         let app = launch()
         let button = pressButton(app)
-        for _ in 0..<10 { button.tap() }
-        XCTAssertEqual(count(app, "currentRun"), 10)
+        for _ in 0..<25 { button.tap() }
 
-        // The Flinch: caption is on screen for roughly 3 s after the 10th press.
+        // Check the caption first: it is on screen only for a few seconds ("The Getaway").
         let caption = element(app, "setPieceCaption")
-        XCTAssertTrue(caption.waitForExistence(timeout: 5), "set-piece caption should appear at run 10")
+        XCTAssertTrue(caption.waitForExistence(timeout: 6), "set-piece caption should appear at run 25")
 
-        // Taps during the set-piece still count (the button only shrinks; it stays tappable).
+        // Taps during the set-piece still count.
         for _ in 0..<3 { button.tap() }
-        XCTAssertEqual(count(app, "currentRun"), 13, "taps during a set-piece must all count")
-        XCTAssertEqual(count(app, "totalPresses"), 13)
+        XCTAssertEqual(count(app, "currentRun"), 28, "taps during a set-piece must all count")
+        XCTAssertEqual(count(app, "totalPresses"), 28)
     }
 
     // MARK: 4. Daily challenge and Reactiondex
