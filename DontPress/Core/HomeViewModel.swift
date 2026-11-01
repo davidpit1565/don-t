@@ -18,20 +18,60 @@ final class HomeViewModel {
     /// Increments once per accepted press; views may key light animation on it.
     private(set) var pressCount = 0
 
+    // [audio] Persisted mute setting; on by default.
+    private(set) var isSoundEnabled: Bool
+    // Reactiondex: lines seen on this device, and whether the latest press revealed a new one.
+    private(set) var reactiondex: Reactiondex
+    private(set) var isNewDiscovery = false
+    // MARK: Set-pieces ("the button fights back")
+    /// The set-piece currently playing over the button, if any. Purely visual: presses during
+    /// a set-piece are counted exactly like any other press. The view clears it via
+    /// `finishSetPiece(id:)` when its timeline ends.
+    private(set) var activeSetPiece: SetPiece?
+    @ObservationIgnored private var setPieceDirector = SetPieceDirector()
+    // MARK: Toys (egg / balloon) — see Core/Toys. Observable object; its own properties drive the views.
+    let toys: ToySession
+
     @ObservationIgnored private let service: PressService
     @ObservationIgnored private var reactions: ReactionEngine
     @ObservationIgnored private let haptics: HapticFeedback
+    @ObservationIgnored private let sounds: SoundEffects // [audio]
 
-    init(service: PressService, reactions: ReactionEngine = ReactionEngine(), haptics: HapticFeedback? = nil) {
+    // MARK: Daily challenge & streak (feat-daily)
+    /// Today's challenge, progress and streak; nil when no tracker is injected.
+    private(set) var daily: DailySnapshot?
+    @ObservationIgnored private let dailyTracker: DailyTracker?
+
+    // MARK: Pro nudges (feat-nudges). Logic in Core/ProNudgeScheduler.swift; actions in HomeViewModel+ProNudges.swift.
+    /// The soft Pro card to show, if any. Never blocks or changes counting.
+    var pendingNudge: ProNudge?
+    @ObservationIgnored let nudges: ProNudgeScheduler?
+
+    init(service: PressService, reactions: ReactionEngine = ReactionEngine(), haptics: HapticFeedback? = nil,
+         sounds: SoundEffects? = nil, daily: DailyTracker? = nil, toys: ToySession? = nil,
+         nudges: ProNudgeScheduler? = nil) {
+        self.nudges = nudges
+        self.dailyTracker = daily
+        self.daily = daily?.snapshot
         self.service = service
         self.reactions = reactions
         let haptics = haptics ?? NoHaptics()
         self.haptics = haptics
+        self.toys = toys ?? ToySession(store: service.store)
         self.stats = service.stats
         self.isPro = service.savedIsPro
         self.selectedTheme = ButtonTheme.resolve(id: service.savedThemeID, stats: service.stats, isPro: service.savedIsPro)
         self.reactionText = ReactionCatalog.idle
+        self.reactiondex = Reactiondex(discoveredIDs: service.savedDiscoveredReactionIDs)
         haptics.prepare()
+        // [audio]
+        let sounds = sounds ?? NoSounds()
+        self.sounds = sounds
+        self.isSoundEnabled = service.savedSoundEnabled
+        if isSoundEnabled { sounds.prepare() }
+        // A saved toy whose gate is no longer met (Pro refunded, or the piñata's play threshold not
+        // reached on this device) falls back to the free button.
+        if !isToyUnlocked(self.toys.selectedKind) { self.toys.select(.button) }
     }
 
     /// One accepted press. Counting happens first; reaction and haptics cannot affect it.
@@ -46,26 +86,121 @@ final class HomeViewModel {
         let newAchievements = Achievement.newlyUnlocked(before: before, after: result.stats)
         // With Pro everything is already unlocked, so earning a style is not news.
         let newThemes = isPro ? [] : ButtonTheme.newlyUnlocked(before: before, after: result.stats)
-        if !newAchievements.isEmpty || !newThemes.isEmpty {
+        // feat-pinata: the press that crosses the play threshold (with Pro) hangs the piñata.
+        let pinataUnlocked = PinataGate.newlyUnlocked(before: before.totalPresses, after: result.stats.totalPresses, isPro: isPro)
+        // Progression: toys earned by play (exactly once per crossing; with Pro it is not news).
+        let newToys = isPro ? [] : ProgressionRules.newlyUnlockedByPlay(before: before, after: result.stats)
+        // Soft Pro moments (never while counting; shown later only if every scheduler rule allows it).
+        if !isPro {
+            if let kind = newToys.first {
+                offerProMoment(.toyUnlockedByPlay(kind))
+            } else {
+                for kind in [ToyKind.egg, .balloon] {
+                    let a = ProgressionRules.fractionToUnlock(for: kind, stats: before)
+                    let b = ProgressionRules.fractionToUnlock(for: kind, stats: result.stats)
+                    if a < 0.8, b >= 0.8, b < 1 { offerProMoment(.nearUnlock(toy: kind, progress: b)); break }
+                }
+            }
+        }
+        if !newAchievements.isEmpty || !newThemes.isEmpty || !newToys.isEmpty || pinataUnlocked {
             var parts: [String] = []
             if !newAchievements.isEmpty { parts.append("Achievement: " + newAchievements.map(\.title).joined(separator: ", ")) }
             if !newThemes.isEmpty { parts.append("New button style: " + newThemes.map(\.name).joined(separator: ", ")) }
+            if pinataUnlocked { parts.append("New toy: Piñata") }
+            if let toyLine = ProgressionRules.unlockMessage(for: newToys) { parts.append(toyLine) }
             unlockMessage = parts.joined(separator: " · ")
         }
 
-        if let milestone = result.milestone {
-            reactionText = reactions.reaction(forMilestone: milestone).text
-            haptics.milestone()
-        } else if !newAchievements.isEmpty {
-            reactionText = reactions.reaction(forPress: result.stats.currentRun).text
+        // Special story/secret/ending line for this exact run count, else milestone, else tier line.
+        let line = reactions.storyAwareReaction(forRun: result.stats.currentRun, milestone: result.milestone)
+        reactionText = line.text
+        if result.milestone != nil || !newAchievements.isEmpty {
             haptics.milestone()
         } else {
-            reactionText = reactions.reaction(forPress: result.stats.currentRun).text
             haptics.press()
         }
+        recordDiscovery(line)
+
+        // [audio] After counting; sound can never affect the stats.
+        if result.milestone != nil { playSound(.milestone) }
+        else if !newAchievements.isEmpty { playSound(.achievement) }
+        else if !newThemes.isEmpty || !newToys.isEmpty { playSound(.unlock) }
+        else { playSound(.press(forRun: result.stats.currentRun)) }
+
+        // Set-pieces: consulted after counting, so they can never affect it.
+        if case .start(let piece) = setPieceDirector.registerPress(milestone: result.milestone) {
+            activeSetPiece = piece
+        }
+
+        // feat-daily: observe the accepted press (never affects the counters above).
+        if let dailyTracker {
+            let (before, after) = dailyTracker.recordPress()
+            daily = after
+            if let reaction = SignatureReaction.reaction(withText: reactionText) { dailyTracker.noteReaction(reaction) }
+            if before != .success, after.result == .success {
+                unlockMessage = [unlockMessage, "Daily challenge complete. Now stop."].compactMap { $0 }.joined(separator: " · ")
+                nudges?.offer(.dailyChallengeCompleted) // feat-nudges: shown later, only once tapping stops
+            }
+        }
+        nudges?.notePress() // feat-nudges: after counting; keeps prompts away from rapid tapping
+    }
+
+    /// The view reports that a set-piece's timeline ended (or was interrupted). Stale ids are ignored.
+    func finishSetPiece(id: String) {
+        setPieceDirector.finish(id: id)
+        if activeSetPiece?.id == id { activeSetPiece = nil }
+    }
+
+    // MARK: [audio]
+
+    /// Plays a synthesized effect unless the user muted sounds. Other features (balloon, egg,
+    /// boom, errors) can call this too.
+    func playSound(_ effect: SoundEffect) {
+        guard isSoundEnabled else { return }
+        sounds.play(effect)
+    }
+
+    func setSoundEnabled(_ value: Bool) {
+        guard value != isSoundEnabled else { return }
+        isSoundEnabled = value
+        service.saveSoundEnabled(value)
+        if value { sounds.prepare() }
+    }
+
+    // MARK: Daily challenge & streak (feat-daily)
+
+    /// Re-reads the day (e.g. when the daily sheet opens after midnight).
+    func refreshDaily() { daily = dailyTracker?.snapshot }
+
+    var dailyShareContent: DailyShareContent? {
+        daily.flatMap { DailyShareContent.make(snapshot: $0) }
     }
 
     func dismissUnlockMessage() { unlockMessage = nil }
+
+    // MARK: Reactiondex
+
+    private func recordDiscovery(_ line: Reaction) {
+        isNewDiscovery = reactiondex.record(line.id)
+        if isNewDiscovery { service.saveDiscoveredReactionIDs(reactiondex.persistableIDs) }
+    }
+
+    // MARK: Toys
+    /// One accepted tap on the egg or balloon. Counted exactly once through `press()` (counters,
+    /// achievements, reaction, haptic), then the toy advances; a hatch or pop replaces the reaction
+    /// line and adds the stronger haptic.
+    func pressToy() {
+        press()
+        if let payoffLine = toys.tapSelected() {
+            reactionText = payoffLine
+            haptics.milestone()
+            switch toys.selectedKind {
+            case .egg: playSound(.eggHatch)
+            case .pinata: playSound(.achievement)   // feat-pinata: burst reuses the fanfare
+            default: playSound(.balloonPop)
+            }
+        }
+    }
 
     /// Called when the purchase state changes (purchase, restore, refund). Falls back to
     /// Classic if the selected style is no longer unlocked.
@@ -73,8 +208,29 @@ final class HomeViewModel {
         guard value != isPro else { return }
         isPro = value
         service.saveIsPro(value)
+        if value { pendingNudge = nil } // feat-nudges: never shown to Pro owners
         selectedTheme = ButtonTheme.resolve(id: selectedTheme.id, stats: stats, isPro: value)
         if selectedTheme.id != service.savedThemeID { service.saveThemeID(selectedTheme.id) }
+        if !isToyUnlocked(toys.selectedKind) { toys.select(.button) }
+    }
+
+    // MARK: Toy progression (Pro or play threshold; rules in ProgressionRules)
+
+    func toyUnlockState(_ kind: ToyKind) -> ToyUnlockState {
+        ProgressionRules.unlockState(for: kind, stats: stats, isPro: isPro)
+    }
+
+    /// feat-pinata: picker caption for a locked piñata, e.g. "1,200/5,000 · Pro".
+    var pinataProgressText: String { PinataGate.progressText(totalPresses: stats.totalPresses, isPro: isPro) }
+
+    func isToyUnlocked(_ kind: ToyKind) -> Bool { toyUnlockState(kind).isUnlocked }
+
+    /// Selects a toy if it is unlocked; returns false for a locked toy (show the Pro offer).
+    @discardableResult
+    func selectToy(_ kind: ToyKind) -> Bool {
+        guard isToyUnlocked(kind) else { return false }
+        toys.select(kind)
+        return true
     }
 
     /// Choosing a locked style is ignored.
@@ -95,6 +251,12 @@ final class HomeViewModel {
     var unlockedAchievementCount: Int { achievementStatuses.filter(\.isUnlocked).count }
 
     var shareContent: ShareCardContent? {
-        ShareCardContent.make(personalBest: stats.personalBest)
+        ShareCardContent.make(
+            personalBest: stats.personalBest,
+            totalPresses: stats.totalPresses,
+            dayNumber: daily?.challenge.dayNumber,
+            streak: daily?.streak ?? 0,
+            signatureLine: dailyTracker?.signatureReaction?.text
+        )
     }
 }

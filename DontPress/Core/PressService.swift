@@ -2,7 +2,8 @@ import Foundation
 
 /// Owns counting. One call to `registerPress()` is exactly one accepted press.
 final class PressService {
-    private let store: StatsStoring
+    /// Exposed so sibling features (e.g. `ToySession`) can persist through the same store.
+    let store: StatsStoring
     private(set) var stats: PressStats
 
     /// A new `PressService` always starts a fresh current run at zero;
@@ -21,6 +22,11 @@ final class PressService {
     func saveThemeID(_ id: String) { store.saveThemeID(id) }
     var savedIsPro: Bool { store.loadIsPro() }
     func saveIsPro(_ value: Bool) { store.saveIsPro(value) }
+    var savedSoundEnabled: Bool { store.loadSoundEnabled() }
+    func saveSoundEnabled(_ value: Bool) { store.saveSoundEnabled(value) }
+    // Reactiondex
+    var savedDiscoveredReactionIDs: [String] { store.loadDiscoveredReactionIDs() }
+    func saveDiscoveredReactionIDs(_ ids: [String]) { store.saveDiscoveredReactionIDs(ids) }
 
     @discardableResult
     func registerPress() -> PressResult {

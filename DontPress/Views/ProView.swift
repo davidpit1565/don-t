@@ -24,9 +24,11 @@ struct ProView: View {
                         .accessibilityAddTraits(.isHeader)
 
                     VStack(alignment: .leading, spacing: DS.Spacing.m) {
-                        point("Unlock all 5 button styles right away")
+                        point("The Egg and the Balloon toys, instantly")
+                        point("The Piñata: Pro, plus 5,000 total presses to hang it")
+                        point("All 5 button styles right away")
+                        point("4 alternate app icons")
                         point("One-time purchase. No subscription")
-                        point("Achievements stay free, and you can still earn styles by playing")
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
 

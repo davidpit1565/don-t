@@ -1,0 +1,63 @@
+name: One-screen layout check
+
+on:
+  push:
+    branches: [claude/one-screen-layout, claude/v1.1]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fit:
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { device: "iPhone SE (3rd generation)", slug: se }
+          - { device: "iPhone 16", slug: 16 }
+          - { device: "iPhone 16 Pro Max", slug: promax }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run the fit test
+        id: t
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          mkdir -p build
+          xcrun simctl list devices available | grep -i "iphone" | head -12
+          xcodebuild test \
+            -project DontPress.xcodeproj -scheme DontPress \
+            -destination "platform=iOS Simulator,name=${{ matrix.device }}" \
+            -only-testing:DontPressUITests/ScreenshotTests/testEverythingFitsOnOneScreen \
+            -resultBundlePath build/result.xcresult \
+            CODE_SIGNING_ALLOWED=NO 2>&1 | tee build/xcodebuild.log | tail -60
+      - name: Export screenshot
+        if: always()
+        run: |
+          mkdir -p build/att out
+          xcrun xcresulttool export attachments --path build/result.xcresult --output-path build/att || true
+          python3 - <<'PY'
+          import json, os, shutil
+          src="build/att"; names={}
+          mf=os.path.join(src,"manifest.json")
+          if os.path.exists(mf):
+              for t in json.load(open(mf)):
+                  for a in t.get("attachments",[]):
+                      names[a["exportedFileName"]]=a.get("suggestedHumanReadableName","")
+          for f in sorted(os.listdir(src)):
+              if f!="manifest.json" and names.get(f,"").startswith("fit"):
+                  shutil.copy(os.path.join(src,f),"out/fit-${{ matrix.slug }}.png")
+          PY
+      - name: Publish
+        if: always()
+        run: |
+          git config user.name "github-actions"; git config user.email "actions@users.noreply.github.com"
+          git checkout --orphan ci-layout-${{ matrix.slug }}; git rm -rf . >/dev/null 2>&1 || true
+          cp out/* . 2>/dev/null || true; cp build/xcodebuild.log . 2>/dev/null || true
+          git add -A; git commit -m "layout ${{ matrix.slug }} ${GITHUB_SHA}" || true
+          git push --force origin ci-layout-${{ matrix.slug }}
+      - name: Fail if the fit test failed
+        if: steps.t.outcome == 'failure'
+        run: exit 1

@@ -6,32 +6,34 @@ struct HomeView: View {
     @State private var isSharing = false
     @State private var shareError = false
     @State private var showCollection = false
+    @State private var showToyPro = false
+    /// Set-pieces: plays the haptic plan of the active set-piece (see SetPieceEffects.swift).
+    @State private var setPieceHaptics = SetPieceHaptics()
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         GeometryReader { proxy in
-            ScrollView {
-                VStack(spacing: DS.Spacing.l) {
-                    header
-                    Spacer(minLength: 0)
-                    pressButton(available: proxy.size)
-                    reactionLine
-                    Spacer(minLength: 0)
-                    stats
-                    shareButton
-                    legalLinks
+            if typeSize.isAccessibilitySize {
+                // Huge accessibility text cannot fit one screen: allow scrolling only here.
+                ScrollView {
+                    content(fixedDiameter: min(proxy.size.width - DS.Spacing.l * 2, 240))
+                        .frame(maxWidth: .infinity, minHeight: proxy.size.height)
                 }
-                .padding(.horizontal, DS.Spacing.l)
-                .padding(.vertical, DS.Spacing.m)
-                .frame(maxWidth: 520)
-                .frame(maxWidth: .infinity, minHeight: proxy.size.height)
+                .scrollBounceBehavior(.basedOnSize)
+            } else {
+                // Everything on ONE screen, no scrolling: the button takes the space that is left.
+                content(fixedDiameter: nil)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .scrollBounceBehavior(.basedOnSize)
         }
         .overlay(alignment: .top) { unlockBanner }
+        // feat-nudges: optional soft Pro card at the bottom; overlays without shifting the layout.
+        .overlay(alignment: .bottom) { ProNudgeOverlay(model: model) { showToyPro = true } }
+        .proNudgeIdleCheck(model)
         .sheet(isPresented: $showCollection) { CollectionView(model: model, proStore: proStore) }
+        .sheet(isPresented: $showToyPro) { ProView(proStore: proStore) }
         .background(DS.Palette.background.ignoresSafeArea())
         .preferredColorScheme(.dark)
         .alert("Couldn't make the image", isPresented: $shareError) {
@@ -41,12 +43,58 @@ struct HomeView: View {
         }
     }
 
+    // MARK: Layout
+
+    private func content(fixedDiameter: CGFloat?) -> some View {
+        VStack(spacing: DS.Spacing.m) {
+            header
+            buttonArea(fixedDiameter: fixedDiameter)
+            VStack(spacing: DS.Spacing.xs) {
+                reactionLine
+                newDiscoveryMarker
+            }
+            stats
+            ToyPicker(model: model) { showToyPro = true }   // Toys: button / egg / balloon / piñata (Views/Toys)
+            shareButton
+            legalLinks
+        }
+        .padding(.horizontal, DS.Spacing.l)
+        .padding(.vertical, DS.Spacing.s)
+        .frame(maxWidth: 520)
+    }
+
+    @ViewBuilder
+    private func buttonArea(fixedDiameter: CGFloat?) -> some View {
+        if let fixedDiameter {
+            focalToy(diameter: fixedDiameter)
+        } else {
+            GeometryReader { geo in
+                let diameter = max(min(geo.size.width, geo.size.height, 340), 120)
+                focalToy(diameter: diameter)
+                    .frame(width: geo.size.width, height: geo.size.height)
+            }
+            .frame(minHeight: 140)
+        }
+    }
+
+    // MARK: Toys (Views/Toys): whatever is selected fills the same flexible square.
+
+    @ViewBuilder
+    private func focalToy(diameter: CGFloat) -> some View {
+        switch model.toys.selectedKind {
+        case .button: pressButton(diameter: diameter)
+        case .egg: EggToyView(model: model, size: diameter)
+        case .balloon: BalloonToyView(model: model, size: diameter)
+        case .pinata: PinataToyView(model: model, size: diameter)   // feat-pinata
+        }
+    }
+
     // MARK: Sections
 
     private var header: some View {
         VStack(spacing: DS.Spacing.s) {
             HStack {
-                Color.clear.frame(width: 44, height: 44)
+                SoundToggleButton(model: model) // [audio] replaces the 44pt spacer
                 Spacer()
                 Text("DON'T PRESS")
                     .font(.footnote.weight(.heavy))
@@ -72,15 +120,19 @@ struct HomeView: View {
         }
     }
 
-    private func pressButton(available: CGSize) -> some View {
-        let base = min(available.width - DS.Spacing.l * 2, available.height * 0.38, 340)
-        let diameter = max(base, 180)
-        return Button {
+    private func pressButton(diameter: CGFloat) -> some View {
+        Button {
             model.press()
         } label: {
             BigRedButtonLabel(diameter: diameter, theme: model.selectedTheme)
         }
         .buttonStyle(PlungerButtonStyle(diameter: diameter, theme: model.selectedTheme))
+        // Set-pieces ("the button fights back"): visual only; taps keep counting underneath.
+        .setPieceEffects(
+            model.activeSetPiece, diameter: diameter,
+            onHaptic: { setPieceHaptics.play($0) },
+            onFinished: { model.finishSetPiece(id: $0) }
+        )
         .accessibilityLabel("Don't press")
         .accessibilityHint("Double tap to press it anyway. Adds one to your run.")
         .accessibilityValue(buttonAccessibilityValue)
@@ -90,7 +142,8 @@ struct HomeView: View {
     /// VoiceOver reads this after activation, so the reaction is heard without extra announcements.
     private var buttonAccessibilityValue: String {
         let run = "Current run \(model.stats.currentRun.formatted())"
-        return model.stats.currentRun == 0 ? run : "\(run). \(model.reactionText)"
+        let fresh = model.isNewDiscovery ? " New line discovered." : "" // Reactiondex
+        return model.stats.currentRun == 0 ? run : "\(run). \(model.reactionText)\(fresh)"
     }
 
     private var reactionLine: some View {
@@ -98,11 +151,30 @@ struct HomeView: View {
             .font(.title3.weight(.semibold))
             .foregroundStyle(DS.Palette.textPrimary)
             .multilineTextAlignment(.center)
-            .frame(maxWidth: .infinity, minHeight: 60, alignment: .top)
+            .frame(maxWidth: .infinity, minHeight: 56, alignment: .top)
             .fixedSize(horizontal: false, vertical: true)
             .contentTransition(.opacity)
             .animation(.easeOut(duration: 0.12), value: model.reactionText)
             .accessibilityIdentifier("reactionLabel")
+    }
+
+    /// Reactiondex: small "NEW" tag under the reaction when this press revealed an unseen line.
+    /// It always reserves its (small) space and only fades in, so it can never overlap a
+    /// two-line reaction and never makes the layout jump.
+    private var newDiscoveryMarker: some View {
+        let isVisible = model.isNewDiscovery && model.stats.currentRun > 0
+        return Text("NEW")
+            .font(.caption2.weight(.heavy))
+            .tracking(1.5)
+            .foregroundStyle(DS.Palette.textPrimary)
+            .padding(.horizontal, DS.Spacing.s)
+            .padding(.vertical, 2)
+            .background(DS.Palette.darkRed, in: Capsule())
+            .opacity(isVisible ? 1 : 0)
+            .animation(.easeOut(duration: 0.15), value: isVisible)
+            .accessibilityHidden(!isVisible)
+            .accessibilityLabel("New line discovered")
+            .accessibilityIdentifier("newDiscoveryMarker")
     }
 
     @ViewBuilder
@@ -155,7 +227,8 @@ struct HomeView: View {
 
     @ViewBuilder
     private var unlockBanner: some View {
-        if let message = model.unlockMessage {
+        // Waits for a running set-piece to finish so the banner and its caption never collide.
+        if let message = model.unlockMessage, model.activeSetPiece == nil {
             Text(message)
                 .font(.footnote.weight(.semibold))
                 .foregroundStyle(DS.Palette.textPrimary)
@@ -164,7 +237,7 @@ struct HomeView: View {
                 .padding(.vertical, DS.Spacing.s)
                 .background(DS.Palette.surface, in: Capsule())
                 .overlay(Capsule().strokeBorder(DS.Palette.border, lineWidth: 1))
-                .padding(.top, DS.Spacing.s)
+                .padding(.top, 56)   // below the header row (sound / wordmark / trophy)
                 .padding(.horizontal, DS.Spacing.l)
                 .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
                 .accessibilityIdentifier("unlockBanner")
