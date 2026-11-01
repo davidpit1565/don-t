@@ -23,6 +23,12 @@ final class HomeViewModel {
     // Reactiondex: lines seen on this device, and whether the latest press revealed a new one.
     private(set) var reactiondex: Reactiondex
     private(set) var isNewDiscovery = false
+    // MARK: Set-pieces ("the button fights back")
+    /// The set-piece currently playing over the button, if any. Purely visual: presses during
+    /// a set-piece are counted exactly like any other press. The view clears it via
+    /// `finishSetPiece(id:)` when its timeline ends.
+    private(set) var activeSetPiece: SetPiece?
+    @ObservationIgnored private var setPieceDirector = SetPieceDirector()
 
     @ObservationIgnored private let service: PressService
     @ObservationIgnored private var reactions: ReactionEngine
@@ -82,6 +88,17 @@ final class HomeViewModel {
         else if !newAchievements.isEmpty { playSound(.achievement) }
         else if !newThemes.isEmpty { playSound(.unlock) }
         else { playSound(.press(forRun: result.stats.currentRun)) }
+
+        // Set-pieces: consulted after counting, so they can never affect it.
+        if case .start(let piece) = setPieceDirector.registerPress(milestone: result.milestone) {
+            activeSetPiece = piece
+        }
+    }
+
+    /// The view reports that a set-piece's timeline ended (or was interrupted). Stale ids are ignored.
+    func finishSetPiece(id: String) {
+        setPieceDirector.finish(id: id)
+        if activeSetPiece?.id == id { activeSetPiece = nil }
     }
 
     // MARK: [audio]
