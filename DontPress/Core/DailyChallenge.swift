@@ -66,6 +66,12 @@ struct DailyChallenge: Equatable {
         self.kind = Self.kind(for: day)
     }
 
+    /// Explicit kind, for tests and previews.
+    init(day: DayStamp, kind: Kind) {
+        self.day = day
+        self.kind = kind
+    }
+
     init(date: Date, calendar: Calendar = .current) {
         self.init(day: DayStamp(date: date, calendar: calendar))
     }
