@@ -20,7 +20,13 @@ struct DontPressApp: App {
         let model = HomeViewModel(service: service, haptics: UIKitHaptics(), sounds: AudioEngineSounds(),
                                   daily: DailyTracker(store: store), nudges: nudges)
         let proStore = ProStore(cachedIsPro: service.savedIsPro)
-        proStore.onChange = { [weak model] isPro in model?.setPro(isPro) }
+        proStore.onChange = { [weak model] isPro in
+            model?.setPro(isPro)
+            // After a refund/revocation the alternate icons are Pro-only again: restore the classic icon.
+            if !isPro, UIApplication.shared.alternateIconName != nil {
+                UIApplication.shared.setAlternateIconName(nil) { _ in }
+            }
+        }
         _model = State(initialValue: model)
         _proStore = State(initialValue: proStore)
     }
