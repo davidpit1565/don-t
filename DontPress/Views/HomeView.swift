@@ -29,6 +29,9 @@ struct HomeView: View {
             }
         }
         .overlay(alignment: .top) { unlockBanner }
+        // feat-nudges: optional soft Pro card at the bottom; overlays without shifting the layout.
+        .overlay(alignment: .bottom) { ProNudgeOverlay(model: model) { showToyPro = true } }
+        .proNudgeIdleCheck(model)
         .sheet(isPresented: $showCollection) { CollectionView(model: model, proStore: proStore) }
         .sheet(isPresented: $showToyPro) { ProView(proStore: proStore) }
         .background(DS.Palette.background.ignoresSafeArea())
