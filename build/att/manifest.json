@@ -1,0 +1,17 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "BAFBEA5E-F3A2-4024-80B3-9FA084CA6AB8.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "fit_0_EB1BEDEB-C9B7-4887-A519-8F3310F8A4E5.png",
+        "timestamp" : 1793575447.994
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testEverythingFitsOnOneScreen()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testEverythingFitsOnOneScreen"
+  }
+]
