@@ -18,11 +18,16 @@ final class HomeViewModel {
     /// Increments once per accepted press; views may key light animation on it.
     private(set) var pressCount = 0
 
+    // [audio] Persisted mute setting; on by default.
+    private(set) var isSoundEnabled: Bool
+
     @ObservationIgnored private let service: PressService
     @ObservationIgnored private var reactions: ReactionEngine
     @ObservationIgnored private let haptics: HapticFeedback
+    @ObservationIgnored private let sounds: SoundEffects // [audio]
 
-    init(service: PressService, reactions: ReactionEngine = ReactionEngine(), haptics: HapticFeedback? = nil) {
+    init(service: PressService, reactions: ReactionEngine = ReactionEngine(), haptics: HapticFeedback? = nil,
+         sounds: SoundEffects? = nil) {
         self.service = service
         self.reactions = reactions
         let haptics = haptics ?? NoHaptics()
@@ -32,6 +37,11 @@ final class HomeViewModel {
         self.selectedTheme = ButtonTheme.resolve(id: service.savedThemeID, stats: service.stats, isPro: service.savedIsPro)
         self.reactionText = ReactionCatalog.idle
         haptics.prepare()
+        // [audio]
+        let sounds = sounds ?? NoSounds()
+        self.sounds = sounds
+        self.isSoundEnabled = service.savedSoundEnabled
+        if isSoundEnabled { sounds.prepare() }
     }
 
     /// One accepted press. Counting happens first; reaction and haptics cannot affect it.
@@ -63,6 +73,28 @@ final class HomeViewModel {
             reactionText = reactions.reaction(forPress: result.stats.currentRun).text
             haptics.press()
         }
+
+        // [audio] After counting; sound can never affect the stats.
+        if result.milestone != nil { playSound(.milestone) }
+        else if !newAchievements.isEmpty { playSound(.achievement) }
+        else if !newThemes.isEmpty { playSound(.unlock) }
+        else { playSound(.press(forRun: result.stats.currentRun)) }
+    }
+
+    // MARK: [audio]
+
+    /// Plays a synthesized effect unless the user muted sounds. Other features (balloon, egg,
+    /// boom, errors) can call this too.
+    func playSound(_ effect: SoundEffect) {
+        guard isSoundEnabled else { return }
+        sounds.play(effect)
+    }
+
+    func setSoundEnabled(_ value: Bool) {
+        guard value != isSoundEnabled else { return }
+        isSoundEnabled = value
+        service.saveSoundEnabled(value)
+        if value { sounds.prepare() }
     }
 
     func dismissUnlockMessage() { unlockMessage = nil }
