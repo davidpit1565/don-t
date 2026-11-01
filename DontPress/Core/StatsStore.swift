@@ -15,6 +15,13 @@ protocol StatsStoring: AnyObject {
     /// Last known Pro entitlement (StoreKit stays the source of truth; this avoids a flicker at launch).
     func loadIsPro() -> Bool
     func saveIsPro(_ value: Bool)
+    // MARK: Toys (see Core/Toys)
+    /// The chosen tap toy (`ToyKind` raw value), if any.
+    func loadSelectedToyID() -> String?
+    func saveSelectedToyID(_ id: String)
+    /// Ids of creatures hatched from the egg so far.
+    func loadDiscoveredCreatureIDs() -> [String]
+    func saveDiscoveredCreatureIDs(_ ids: [String])
 }
 
 /// Lightweight local store. Missing, negative, or wrongly typed values read as 0.
@@ -23,6 +30,8 @@ final class UserDefaultsStatsStore: StatsStoring {
     static let totalKey = "dontpress.totalPresses"
     static let themeKey = "dontpress.buttonTheme"
     static let proKey = "dontpress.isPro"
+    static let toyKey = "dontpress.selectedToy"
+    static let creaturesKey = "dontpress.discoveredCreatures"
 
     private let defaults: UserDefaults
 
@@ -47,6 +56,13 @@ final class UserDefaultsStatsStore: StatsStoring {
     func loadIsPro() -> Bool { (defaults.object(forKey: Self.proKey) as? Bool) ?? false }
     func saveIsPro(_ value: Bool) { defaults.set(value, forKey: Self.proKey) }
 
+    // MARK: Toys
+    func loadSelectedToyID() -> String? { defaults.object(forKey: Self.toyKey) as? String }
+    func saveSelectedToyID(_ id: String) { defaults.set(id, forKey: Self.toyKey) }
+    /// Wrong type reads as nothing discovered.
+    func loadDiscoveredCreatureIDs() -> [String] { (defaults.object(forKey: Self.creaturesKey) as? [String]) ?? [] }
+    func saveDiscoveredCreatureIDs(_ ids: [String]) { defaults.set(ids, forKey: Self.creaturesKey) }
+
     private func readCounter(_ key: String) -> Int {
         guard let raw = defaults.object(forKey: key) else { return 0 }
         if let value = raw as? Int { return Swift.max(value, 0) }
@@ -59,6 +75,8 @@ final class InMemoryStatsStore: StatsStoring {
     private var stats: PersistedStats
     private var themeID: String?
     private var isPro = false
+    private var selectedToyID: String?
+    private var discoveredCreatureIDs: [String] = []
 
     init(_ stats: PersistedStats = PersistedStats(), themeID: String? = nil) {
         self.stats = stats
@@ -69,6 +87,12 @@ final class InMemoryStatsStore: StatsStoring {
     func saveThemeID(_ id: String) { themeID = id }
     func loadIsPro() -> Bool { isPro }
     func saveIsPro(_ value: Bool) { isPro = value }
+
+    // MARK: Toys
+    func loadSelectedToyID() -> String? { selectedToyID }
+    func saveSelectedToyID(_ id: String) { selectedToyID = id }
+    func loadDiscoveredCreatureIDs() -> [String] { discoveredCreatureIDs }
+    func saveDiscoveredCreatureIDs(_ ids: [String]) { discoveredCreatureIDs = ids }
 
     func load() -> PersistedStats { stats }
     func save(_ stats: PersistedStats) { self.stats = stats }

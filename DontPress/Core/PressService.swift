@@ -2,7 +2,8 @@ import Foundation
 
 /// Owns counting. One call to `registerPress()` is exactly one accepted press.
 final class PressService {
-    private let store: StatsStoring
+    /// Exposed so sibling features (e.g. `ToySession`) can persist through the same store.
+    let store: StatsStoring
     private(set) var stats: PressStats
 
     /// A new `PressService` always starts a fresh current run at zero;

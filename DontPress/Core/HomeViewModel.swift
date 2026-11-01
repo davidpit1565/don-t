@@ -18,15 +18,20 @@ final class HomeViewModel {
     /// Increments once per accepted press; views may key light animation on it.
     private(set) var pressCount = 0
 
+    // MARK: Toys (egg / balloon) — see Core/Toys. Observable object; its own properties drive the views.
+    let toys: ToySession
+
     @ObservationIgnored private let service: PressService
     @ObservationIgnored private var reactions: ReactionEngine
     @ObservationIgnored private let haptics: HapticFeedback
 
-    init(service: PressService, reactions: ReactionEngine = ReactionEngine(), haptics: HapticFeedback? = nil) {
+    init(service: PressService, reactions: ReactionEngine = ReactionEngine(), haptics: HapticFeedback? = nil,
+         toys: ToySession? = nil) {
         self.service = service
         self.reactions = reactions
         let haptics = haptics ?? NoHaptics()
         self.haptics = haptics
+        self.toys = toys ?? ToySession(store: service.store)
         self.stats = service.stats
         self.isPro = service.savedIsPro
         self.selectedTheme = ButtonTheme.resolve(id: service.savedThemeID, stats: service.stats, isPro: service.savedIsPro)
@@ -66,6 +71,18 @@ final class HomeViewModel {
     }
 
     func dismissUnlockMessage() { unlockMessage = nil }
+
+    // MARK: Toys
+    /// One accepted tap on the egg or balloon. Counted exactly once through `press()` (counters,
+    /// achievements, reaction, haptic), then the toy advances; a hatch or pop replaces the reaction
+    /// line and adds the stronger haptic.
+    func pressToy() {
+        press()
+        if let payoffLine = toys.tapSelected() {
+            reactionText = payoffLine
+            haptics.milestone()
+        }
+    }
 
     /// Called when the purchase state changes (purchase, restore, refund). Falls back to
     /// Classic if the selected style is no longer unlocked.
