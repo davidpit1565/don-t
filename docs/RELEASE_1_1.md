@@ -153,6 +153,14 @@ should be extended by the code agents; do not mock screens). Headline = the mark
 
 Keep "private, offline, no ads" for the description instead of a screenshot this time; the 1.0 set used a whole slot on it.
 
+**Capture pipeline (implemented, not yet run on CI at the time of writing).** `DontPressUITests/ScreenshotTests.swift`
+adds the 1.1 captures `v11-egg-crack`, `v11-egg-hatch`, `v11-balloon`, `v11-balloon-pop`, `v11-setpiece-25`,
+`v11-setpiece-50-lock`, `v11-daily`, `v11-reactiondex` and `v11-collection`; CI exports them by name to `ci-screenshots`.
+`python3 Scripts/make_store_screenshots.py <captures dir> <out dir> --set v11` builds an 8-slide 1320x2868 set from
+them (01-launch, set-piece, egg, balloon, daily, Reactiondex, the `07-share-card-847` v2 card render, and a closing
+"No ads. No accounts." slide); `--set v10` (default) still builds the 1.0 set. Pick the 6 slides above from that output
+(e.g. drop the closing slide, as noted). Missing captures skip their slide; nothing is mocked.
+
 ## 8. App preview video (15 seconds, portrait)
 
 App previews must be captured from the app itself (screen recording of the real build; no live-action footage, no
