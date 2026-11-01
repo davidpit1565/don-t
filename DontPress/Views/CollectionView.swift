@@ -6,6 +6,7 @@ struct CollectionView: View {
     @Bindable var proStore: ProStore
     @Environment(\.dismiss) private var dismiss
     @State private var showPro = false
+    @State private var showReactiondex = false
 
     var body: some View {
         NavigationStack {
@@ -27,6 +28,12 @@ struct CollectionView: View {
                 }
 
                 Section {
+                    reactiondexRow
+                } header: {
+                    Text("Reactions")
+                }
+
+                Section {
                     proRow
                 } header: {
                     Text("Pro")
@@ -45,6 +52,36 @@ struct CollectionView: View {
         }
         .preferredColorScheme(.dark)
         .sheet(isPresented: $showPro) { ProView(proStore: proStore) }
+        .sheet(isPresented: $showReactiondex) { ReactiondexView(dex: model.reactiondex) }
+    }
+
+    // MARK: Reactiondex
+
+    private var reactiondexRow: some View {
+        let dex = model.reactiondex
+        return Button { showReactiondex = true } label: {
+            HStack(spacing: DS.Spacing.m) {
+                Image(systemName: "text.book.closed")
+                    .font(.title3)
+                    .foregroundStyle(DS.Palette.highlight)
+                    .frame(width: 40)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Reactiondex").font(.body.weight(.semibold)).foregroundStyle(DS.Palette.textPrimary)
+                    Text(verbatim: "Discovered \(dex.discoveredCount)/\(dex.totalCount) · \(dex.rareFoundCount) rare")
+                        .font(.footnote).foregroundStyle(DS.Palette.textSecondary)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").font(.footnote).foregroundStyle(DS.Palette.textSecondary)
+            }
+            .frame(minHeight: 44)
+        }
+        .listRowBackground(DS.Palette.surface)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Reactiondex")
+        .accessibilityValue("\(dex.discoveredCount) of \(dex.totalCount) lines discovered, \(dex.rareFoundCount) rare")
+        .accessibilityHint("Opens every reaction line you have found")
+        .accessibilityAddTraits(.isButton)
+        .accessibilityIdentifier("reactiondexRow")
     }
 
     private var proRow: some View {

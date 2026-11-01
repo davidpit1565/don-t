@@ -90,7 +90,8 @@ struct HomeView: View {
     /// VoiceOver reads this after activation, so the reaction is heard without extra announcements.
     private var buttonAccessibilityValue: String {
         let run = "Current run \(model.stats.currentRun.formatted())"
-        return model.stats.currentRun == 0 ? run : "\(run). \(model.reactionText)"
+        let fresh = model.isNewDiscovery ? " New line discovered." : "" // Reactiondex
+        return model.stats.currentRun == 0 ? run : "\(run). \(model.reactionText)\(fresh)"
     }
 
     private var reactionLine: some View {
@@ -103,6 +104,26 @@ struct HomeView: View {
             .contentTransition(.opacity)
             .animation(.easeOut(duration: 0.12), value: model.reactionText)
             .accessibilityIdentifier("reactionLabel")
+            .overlay(alignment: .bottom) { newDiscoveryMarker }
+    }
+
+    /// Reactiondex: small "NEW" tag under the reaction when this press revealed an unseen line.
+    /// Hangs below the line (into the stack spacing) so it never changes the layout.
+    @ViewBuilder
+    private var newDiscoveryMarker: some View {
+        if model.isNewDiscovery && model.stats.currentRun > 0 {
+            Text("NEW")
+                .font(.caption2.weight(.heavy))
+                .tracking(1.5)
+                .foregroundStyle(DS.Palette.textPrimary)
+                .padding(.horizontal, DS.Spacing.s)
+                .padding(.vertical, 2)
+                .background(DS.Palette.darkRed, in: Capsule())
+                .alignmentGuide(.bottom) { $0[.top] }
+                .transition(.opacity)
+                .accessibilityLabel("New line discovered")
+                .accessibilityIdentifier("newDiscoveryMarker")
+        }
     }
 
     @ViewBuilder
