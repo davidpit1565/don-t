@@ -25,6 +25,8 @@ struct CollectionView: View {
                     Text("Button style")
                 }
 
+                AppIconPickerSection(stats: model.stats, isPro: model.isPro) { showPro = true }
+
                 Section {
                     ForEach(model.achievementStatuses) { status in
                         achievementRow(status)
