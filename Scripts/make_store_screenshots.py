@@ -152,7 +152,7 @@ def build_v11():
     slides = [
         ("01-dont.png", [[Wt("Whatever you do,")], [R("don't.")]],
          "One button. One rule. Zero self-control.", ("01-launch",)),
-        ("02-fights-back.png", [[Wt("It")], [R("fights back.")]],
+        ("02-fights-back.png", [[Wt("The button")], [R("fights back.")]],
          "Push it far enough and the button makes a scene.",
          ("v11-setpiece-25", "v11-setpiece-50-lock")),
         ("03-crack.png", [[R("Crack it.")]],
