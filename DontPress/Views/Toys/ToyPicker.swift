@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// Compact row of three 44pt targets that swaps what sits in the middle of the screen.
-/// Taps on any toy still go through the one counting path.
+/// Compact row of four 44pt targets that swaps what sits in the middle of the screen.
+/// Taps on any toy still go through the one counting path. Chips are glyph-over-label and
+/// share the width equally so all four fit an iPhone SE (272pt usable: ~62pt each).
 struct ToyPicker: View {
     var model: HomeViewModel
     /// Called when a locked toy is tapped (not yet earned by play, no Pro): show the Pro offer.
@@ -14,55 +15,48 @@ struct ToyPicker: View {
                 let selected = model.toys.selectedKind == kind
                 let unlockState = model.toyUnlockState(kind)
                 let locked = !unlockState.isUnlocked
-                let progressLabel = ProgressionRules.progressLabel(for: unlockState)
+                // feat-pinata: with Pro but not enough play, the chip shows the progress; no offer to show.
+                let needsProOffer = locked && !(kind == .pinata && model.isPro)
                 Button {
-                    if locked {
+                    if needsProOffer {
                         onLockedTap()
-                    } else {
+                    } else if !locked {
                         withAnimation(reduceMotion ? nil : .snappy(duration: 0.25)) { _ = model.selectToy(kind) }
                     }
                 } label: {
-                    HStack(spacing: DS.Spacing.xs + 2) {
+                    VStack(spacing: 3) {
                         ToyGlyph(kind: kind, theme: model.selectedTheme)
-                            .frame(width: 20, height: 20)
-                        VStack(alignment: .leading, spacing: 0) {
-                            Text(kind.title)
-                                .font(.caption.weight(.semibold))
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.8)
-                            // Progression: how far this toy is from being earned by play.
-                            if let progressLabel {
-                                Text(progressLabel)
-                                    .font(.caption2.weight(.medium).monospacedDigit())
-                                    .foregroundStyle(DS.Palette.textSecondary)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
+                            .frame(width: 18, height: 18)
+                            .overlay(alignment: .topTrailing) {
+                                if locked {
+                                    Image(systemName: "lock.fill")
+                                        .font(.system(size: 8, weight: .bold))
+                                        .foregroundStyle(DS.Palette.textPrimary)
+                                        .padding(1.5)
+                                        .background(DS.Palette.background, in: Circle())
+                                        .offset(x: 5, y: -4)
+                                        .accessibilityHidden(true)
+                                }
                             }
-                        }
-                        if locked {
-                            Image(systemName: "lock.fill")
-                                .font(.system(size: 9, weight: .bold))
-                                .accessibilityHidden(true)
-                        }
+                        Text(chipLabel(for: kind, state: unlockState))
+                            .font(.caption2.weight(.semibold))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.55)
                     }
                     .foregroundStyle(selected ? DS.Palette.textPrimary : DS.Palette.textSecondary)
-                    .padding(.horizontal, DS.Spacing.m)
-                    .frame(minWidth: 44, minHeight: 44)
-                    .background(selected ? DS.Palette.surface : .clear, in: Capsule())
-                    .overlay(Capsule().strokeBorder(selected ? DS.Palette.textSecondary.opacity(0.6) : DS.Palette.border, lineWidth: 1))
-                    .overlay(alignment: .bottom) {
-                        if progressLabel != nil {
-                            ToyUnlockProgressBar(fraction: ProgressionRules.fractionToUnlock(for: kind, stats: model.stats))
-                                .padding(.horizontal, DS.Spacing.m)
-                                .padding(.bottom, 5)
-                                .accessibilityHidden(true)
-                        }
-                    }
+                    .padding(.horizontal, DS.Spacing.xs)
+                    .padding(.vertical, DS.Spacing.xs)
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .background(selected ? DS.Palette.surface : .clear, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .strokeBorder(selected ? DS.Palette.textSecondary.opacity(0.6) : DS.Palette.border, lineWidth: 1)
+                    )
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("\(kind.title) toy")
                 .accessibilityHint("Puts the \(kind.title.lowercased()) in the middle of the screen. Taps on it still count.")
-                .accessibilityValue(ProgressionRules.accessibilityValue(for: unlockState))
+                .accessibilityValue(accessibilityValue(for: kind, state: unlockState))
                 .accessibilityAddTraits(selected ? [.isSelected] : [])
                 .accessibilityIdentifier("toyPicker.\(kind.rawValue)")
             }
@@ -71,22 +65,25 @@ struct ToyPicker: View {
         .accessibilityLabel("Tap toy")
         .accessibilityIdentifier("toyPicker")
     }
-}
 
-/// Hairline progress towards earning a locked toy by play. Not colour-only: the chip also shows "123/300".
-private struct ToyUnlockProgressBar: View {
-    var fraction: Double
+    /// A locked toy shows how far away it is ("123/300", "1,200/5,000 · Pro"); the glyph and the
+    /// VoiceOver label carry the name.
+    private func chipLabel(for kind: ToyKind, state: ToyUnlockState) -> String {
+        guard !state.isUnlocked else { return kind.title }
+        if kind == .pinata { return model.pinataProgressText }
+        return ProgressionRules.progressLabel(for: state) ?? kind.title
+    }
 
-    var body: some View {
-        GeometryReader { proxy in
-            ZStack(alignment: .leading) {
-                Capsule().fill(DS.Palette.border)
-                Capsule()
-                    .fill(DS.Palette.textSecondary)
-                    .frame(width: proxy.size.width * min(max(fraction, 0), 1))
-            }
+    private func accessibilityValue(for kind: ToyKind, state: ToyUnlockState) -> String {
+        guard !state.isUnlocked else { return "" }
+        if kind == .pinata {
+            let presses = model.stats.totalPresses.formatted()
+            let needed = PinataGate.minTotalPresses.formatted()
+            return model.isPro
+                ? "Locked. Needs \(needed) total presses. \(presses) so far"
+                : "Locked. Needs Pro and \(needed) total presses. \(presses) so far"
         }
-        .frame(height: 2)
+        return ProgressionRules.accessibilityValue(for: state)
     }
 }
 
@@ -114,6 +111,12 @@ struct ToyGlyph: View {
                     .frame(width: 13, height: 15)
                 Knot().fill(theme.dark).frame(width: 4, height: 3)
             }
+        case .pinata:
+            // feat-pinata: the banded gem body, no fringe at this size.
+            PinataBands(colors: PinataToyView.bandColors, fringe: false)
+                .clipShape(PinataBodyShape())
+                .overlay(PinataBodyShape().strokeBorder(.black.opacity(0.4), lineWidth: 0.8))
+                .frame(width: 18, height: 13)
         }
     }
 }

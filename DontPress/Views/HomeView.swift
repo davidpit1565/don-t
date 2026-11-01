@@ -54,7 +54,7 @@ struct HomeView: View {
                 newDiscoveryMarker
             }
             stats
-            ToyPicker(model: model) { showToyPro = true }   // Toys: button / egg / balloon (Views/Toys)
+            ToyPicker(model: model) { showToyPro = true }   // Toys: button / egg / balloon / piñata (Views/Toys)
             shareButton
             legalLinks
         }
@@ -85,6 +85,7 @@ struct HomeView: View {
         case .button: pressButton(diameter: diameter)
         case .egg: EggToyView(model: model, size: diameter)
         case .balloon: BalloonToyView(model: model, size: diameter)
+        case .pinata: PinataToyView(model: model, size: diameter)   // feat-pinata
         }
     }
 

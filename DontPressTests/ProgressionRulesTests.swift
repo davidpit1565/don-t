@@ -19,7 +19,7 @@ final class ProgressionRulesTests: XCTestCase {
     }
 
     func testEveryKindHasAStateAndUnlistedKindsAreProOnly() {
-        for kind in ToyKind.allCases {
+        for kind in ToyKind.allCases where kind != .pinata {
             if ProgressionRules.playThreshold(for: kind) == nil {
                 XCTAssertEqual(ProgressionRules.unlockState(for: kind, stats: stats(total: 0), isPro: false),
                                .locked(progress: 0, target: 0), "\(kind) without a threshold is Pro-only")
@@ -29,6 +29,13 @@ final class ProgressionRulesTests: XCTestCase {
             }
             XCTAssertTrue(ProgressionRules.unlockState(for: kind, stats: stats(total: 0), isPro: true).isUnlocked)
         }
+    }
+
+    func testPinataNeedsProAndPlay() {
+        let t = PinataGate.minTotalPresses
+        XCTAssertFalse(ProgressionRules.unlockState(for: .pinata, stats: stats(total: .max), isPro: false).isUnlocked)
+        XCTAssertFalse(ProgressionRules.unlockState(for: .pinata, stats: stats(total: t - 1), isPro: true).isUnlocked)
+        XCTAssertTrue(ProgressionRules.unlockState(for: .pinata, stats: stats(total: t), isPro: true).isUnlocked)
     }
 
     func testButtonIsAlwaysFree() {

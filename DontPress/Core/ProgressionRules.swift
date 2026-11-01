@@ -48,6 +48,11 @@ enum ProgressionRules {
 
     static func unlockState(for kind: ToyKind, stats: PressStats, isPro: Bool) -> ToyUnlockState {
         let total = max(stats.totalPresses, 0)
+        // The piñata is Pro AND play: Pro alone is not enough, play alone is not enough.
+        if kind == .pinata {
+            if PinataGate.isUnlocked(totalPresses: total, isPro: isPro) { return .unlocked(by: .pro) }
+            return .locked(progress: min(total, PinataGate.minTotalPresses), target: PinataGate.minTotalPresses)
+        }
         if let target = playThreshold(for: kind), total >= target { return .unlocked(by: .play) }
         if isPro { return .unlocked(by: .pro) }
         guard let target = playThreshold(for: kind) else { return .locked(progress: 0, target: 0) }
