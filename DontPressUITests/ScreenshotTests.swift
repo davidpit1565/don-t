@@ -4,8 +4,8 @@ import XCTest
 final class ScreenshotTests: XCTestCase {
     override func setUp() { continueAfterFailure = false }
 
-    private func shot(_ app: XCUIApplication, _ name: String) {
-        Thread.sleep(forTimeInterval: 0.8)   // let number/banner animations settle
+    private func shot(_ app: XCUIApplication, _ name: String, settle: TimeInterval = 0.8) {
+        Thread.sleep(forTimeInterval: settle)   // let number/banner animations settle
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = name
         attachment.lifetime = .keepAlways
@@ -102,4 +102,153 @@ final class ScreenshotTests: XCTestCase {
         app.buttons["pressButton"].tap()
         shot(app, "06-accessibility-xl")
     }
+
+    // MARK: - 1.1 captures (toys, set-pieces, daily, Reactiondex, collection)
+
+    /// Any element by accessibility identifier, whatever its type (rows combine their children).
+    private func element(_ app: XCUIApplication, _ id: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(identifier: id).firstMatch
+    }
+
+    private func value(of element: XCUIElement) -> String {
+        (element.value as? String) ?? ""
+    }
+
+    /// Waits for `element`'s label to satisfy `predicate`, polling briefly. Never fails the test.
+    @discardableResult
+    private func waitForLabel(_ element: XCUIElement, timeout: TimeInterval, _ predicate: (String) -> Bool) -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        repeat {
+            if element.exists, predicate(element.label) { return true }
+            Thread.sleep(forTimeInterval: 0.15)
+        } while Date() < deadline
+        return false
+    }
+
+    /// Swipes the Collection list up (gently) until `target` is hittable. Returns whether it is.
+    @discardableResult
+    private func scrollTo(_ target: XCUIElement, in app: XCUIApplication, maxSwipes: Int = 6) -> Bool {
+        var swipes = 0
+        while !(target.exists && target.isHittable) && swipes < maxSwipes {
+            app.swipeUp(velocity: .slow)
+            swipes += 1
+        }
+        return target.exists && target.isHittable
+    }
+
+    private func openCollection(_ app: XCUIApplication) {
+        let collection = app.buttons["collectionButton"]
+        XCTAssertTrue(collection.waitForExistence(timeout: 10))
+        collection.tap()
+        _ = app.buttons["collectionDone"].waitForExistence(timeout: 5)
+    }
+
+    func testCaptureV11Egg() {
+        let app = launch()
+        XCTAssertTrue(app.buttons["pressButton"].waitForExistence(timeout: 10))
+        let picker = app.buttons["toyPicker.egg"]
+        XCTAssertTrue(picker.waitForExistence(timeout: 5))
+        picker.tap()
+        let egg = element(app, "eggToy")
+        XCTAssertTrue(egg.waitForExistence(timeout: 5))
+
+        // Hatching takes 5...9 taps, so 4 taps always leaves a cracked, unhatched egg.
+        for _ in 0..<4 { egg.tap() }
+        shot(app, "v11-egg-crack")
+
+        // Tap until it hatches; stop on the hatching tap (another tap would start a new egg).
+        var taps = 0
+        while !value(of: egg).hasPrefix("Hatched") && taps < 12 {
+            egg.tap()
+            taps += 1
+        }
+        let reaction = element(app, "reactionLabel")
+        waitForLabel(reaction, timeout: 3) { $0.localizedCaseInsensitiveContains("hatched") }
+        shot(app, "v11-egg-hatch")   // the creature stays up for ~4 s
+    }
+
+    func testCaptureV11Balloon() {
+        let app = launch()
+        XCTAssertTrue(app.buttons["pressButton"].waitForExistence(timeout: 10))
+        let picker = app.buttons["toyPicker.balloon"]
+        XCTAssertTrue(picker.waitForExistence(timeout: 5))
+        picker.tap()
+        let balloon = element(app, "balloonToy")
+        XCTAssertTrue(balloon.waitForExistence(timeout: 5))
+
+        // Popping takes 6...14 taps, so 5 taps always leaves it inflated (~67%).
+        for _ in 0..<5 { balloon.tap() }
+        shot(app, "v11-balloon")
+
+        var taps = 0
+        while value(of: balloon) != "Popped" && taps < 14 {
+            balloon.tap()
+            taps += 1
+        }
+        shot(app, "v11-balloon-pop", settle: 0.3)   // the pop clears itself after ~2.5 s
+    }
+
+    func testCaptureV11SetPieces() {
+        let app = launch()
+        let button = app.buttons["pressButton"]
+        XCTAssertTrue(button.waitForExistence(timeout: 10))
+
+        // 25: "The Getaway". Its caption runs for ~2.6 s; the last line lands at ~1.15 s.
+        for _ in 0..<25 { button.tap() }
+        let caption = element(app, "setPieceCaption")
+        if caption.waitForExistence(timeout: 3) {
+            waitForLabel(caption, timeout: 1.5) { $0.contains("nowhere") }
+            shot(app, "v11-setpiece-25", settle: 0.2)
+        } else {
+            // Timing on slow CI hosts: keep the frame for inspection rather than failing the suite.
+            shot(app, "v11-setpiece-25", settle: 0)
+        }
+        Thread.sleep(forTimeInterval: 2.0)   // let the getaway finish before the next milestone
+
+        // 50: "Lockdown". The lock card is up for ~2.4 s.
+        for _ in 0..<25 { button.tap() }
+        let lockCard = element(app, "setPieceLockCard")
+        if lockCard.waitForExistence(timeout: 3) {
+            shot(app, "v11-setpiece-50-lock", settle: 0.4)
+        } else {
+            shot(app, "v11-setpiece-50-lock", settle: 0)
+        }
+    }
+
+    func testCaptureV11DailyAndReactiondex() {
+        let app = launch()
+        let button = app.buttons["pressButton"]
+        XCTAssertTrue(button.waitForExistence(timeout: 10))
+        // Seed: some daily progress and a few dozen discovered reaction lines.
+        for _ in 0..<40 { button.tap() }
+        Thread.sleep(forTimeInterval: 1.5)   // let the 25 set-piece and banners clear
+
+        openCollection(app)
+        let daily = element(app, "dailyRow")
+        XCTAssertTrue(daily.waitForExistence(timeout: 5))
+        daily.tap()
+        _ = element(app, "dailyTitle").waitForExistence(timeout: 5)
+        shot(app, "v11-daily")
+        if app.buttons["dailyDone"].waitForExistence(timeout: 3) { app.buttons["dailyDone"].tap() }
+
+        let dexRow = element(app, "reactiondexRow")
+        _ = dexRow.waitForExistence(timeout: 2)
+        scrollTo(dexRow, in: app)   // last sections of a List are created lazily
+        XCTAssertTrue(dexRow.waitForExistence(timeout: 5))
+        dexRow.tap()
+        _ = element(app, "reactiondexMeter").waitForExistence(timeout: 5)
+        shot(app, "v11-reactiondex")
+    }
+
+    func testCaptureV11Collection() {
+        let app = launch(["-UITestSeedBest", "120", "-UITestSeedTotal", "800"])
+        openCollection(app)
+        XCTAssertTrue(app.buttons["collectionDone"].exists)
+        // Bring the app-icon section into view when it is below the fold; fine if it is not found.
+        let icon = app.descendants(matching: .any)
+            .matching(NSPredicate(format: "identifier BEGINSWITH 'appIcon-'")).firstMatch
+        scrollTo(icon, in: app, maxSwipes: 3)
+        shot(app, "v11-collection")
+    }
 }
+
