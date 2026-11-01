@@ -75,7 +75,7 @@ The button has had enough.
 • Reactiondex: collect every reaction and creature you discover.
 • Sound: new synthesized sounds, with an on/off switch.
 • A better share card for your personal best.
-• [OWNER: one line on what Pro now includes, if it changed. Delete otherwise.]
+• Pro now includes the Egg and the Balloon toys and four alternate app icons, plus all button styles right away
 
 Still no account, no ads, no tracking.
 ```
@@ -100,7 +100,7 @@ WHAT YOU CAN DO
 • Share a clean achievement card with your real personal best through the standard iOS share sheet.
 
 OPTIONAL PRO
-One optional one-time purchase, no subscription. The app shows exactly what Pro includes, and the price, before you buy. The button, the toys, the daily challenge, the share card and every style you earn by playing stay free.
+One optional one-time purchase, no subscription: the Egg and the Balloon toys, four alternate app icons, and every button style right away. The app shows exactly what Pro includes, and the price, before you buy. The big button, the milestone moments, the daily challenge, the streak, the Reactiondex, the share card and every style you earn by playing stay free.
 
 PRIVATE BY DESIGN
 Works fully offline. No account, no ads, no tracking, no analytics. Your progress stays on your iPhone. There are no global rankings: the only person you are competing with is you.
@@ -129,7 +129,7 @@ What to try (about 3 minutes):
 6. Collection: tap the trophy icon for 12 achievements and 5 button styles that unlock by playing.
 7. Share: tap "Share personal best" to render an achievement image with the real number and open the iOS share sheet.
 
-In-app purchase: one non-consumable, com.davidpitchkhadze.dontpress.pro. [OWNER: what Pro includes in 1.1 and where the offer is shown.] Restore Purchases is on the same screen. Please use a Sandbox Apple ID to test.
+In-app purchase: one non-consumable, com.davidpitchkhadze.dontpress.pro. Pro includes the Egg and the Balloon toys, four alternate app icons and all button styles; the offer opens when you tap a locked toy (Egg/Balloon in the bottom picker), a locked style or icon in Collection (trophy), or the Pro row. Restore Purchases is on the same screen. Please use a Sandbox Apple ID to test.
 
 Current Run starts at zero on every cold launch by design. All progress is stored on the device (UserDefaults). The app collects no data, requests no permissions and sends no notifications. Privacy Policy and Support are linked at the bottom of the main screen.
 ```
@@ -190,3 +190,9 @@ Poster frame: choose the frame at about 5 s (mid set-piece), which is what peopl
 - [ ] Age rating re-answered if any new content (cartoon creatures popping/hatching is not violence, but answer honestly).
 - [ ] 6 new screenshots + optional preview uploaded; old 1.0 screenshots removed if they no longer match.
 - [ ] Submit only when the owner decides to.
+
+
+## Pro pricing (owner decision)
+- Pro content in 1.1: Egg + Balloon toys, 4 alternate app icons, all 5 button styles right away (styles can still be earned).
+- Suggested price: EUR 3.99 (one-time). Raise it in App Store Connect > In-App Purchases > DON'T PRESS Pro > Price Schedule when 1.1 is released. Existing buyers keep Pro (same product ID). No data supports one price over another; treat it as a test.
+- Update the in-app-purchase review screenshot after the change (the offer now lists the toys and icons).

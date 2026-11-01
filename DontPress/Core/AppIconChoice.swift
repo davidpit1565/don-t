@@ -30,8 +30,9 @@ struct AppIconChoice: Equatable, Identifiable {
         return all.first { $0.iconName == name } ?? primary
     }
 
+    /// Alternate icons are a Pro perk; the classic (primary) icon is always available.
     func isUnlocked(for stats: PressStats, isPro: Bool = false) -> Bool {
-        theme.isUnlocked(for: stats, isPro: isPro)
+        iconName == nil || isPro
     }
 
     static func statuses(stats: PressStats, isPro: Bool, currentIconName: String?) -> [AppIconStatus] {
@@ -50,6 +51,6 @@ struct AppIconStatus: Identifiable, Equatable {
 
     /// Shown under a locked row; mirrors the button-style wording.
     var requirementText: String? {
-        isUnlocked ? nil : "\(choice.theme.rule.requirementText), or unlock with Pro"
+        isUnlocked ? nil : "Included with Pro"
     }
 }

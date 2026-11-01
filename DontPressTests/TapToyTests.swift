@@ -287,6 +287,7 @@ final class TapToyTests: XCTestCase {
         onMain {
             let store = InMemoryStatsStore()
             store.saveSelectedToyID("egg")
+            store.saveIsPro(true)   // the egg is a Pro toy
             let model = HomeViewModel(service: PressService(store: store))
             XCTAssertEqual(model.toys.selectedKind, .egg)
         }

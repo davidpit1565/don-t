@@ -8,6 +8,9 @@ enum ToyKind: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
+    /// The egg and the balloon are part of Pro; the big button is always free.
+    var requiresPro: Bool { self != .button }
+
     var title: String {
         switch self {
         case .button: return "Button"

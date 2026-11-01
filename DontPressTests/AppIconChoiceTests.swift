@@ -37,15 +37,13 @@ final class AppIconChoiceTests: XCTestCase {
         XCTAssertEqual(AppIconChoice.choice(forIconName: ""), .primary)
     }
 
-    func testUnlockFollowsTheThemeRule() {
+    func testAlternateIconsArePro() {
         for choice in AppIconChoice.all {
-            for s in [stats(), stats(best: 10, total: 10), stats(best: 249, total: 499), stats(best: 250, total: 500)] {
-                XCTAssertEqual(choice.isUnlocked(for: s), choice.theme.isUnlocked(for: s), choice.id)
+            for s in [stats(), stats(best: 10, total: 10), stats(best: 250, total: 500), stats(best: Int.max, total: Int.max)] {
+                // Playing never unlocks an alternate icon: they are a Pro perk. Classic is always on.
+                XCTAssertEqual(choice.isUnlocked(for: s, isPro: false), choice.iconName == nil, choice.id)
             }
         }
-        let cobalt = AppIconChoice.all.first { $0.theme == .cobalt }!
-        XCTAssertFalse(cobalt.isUnlocked(for: stats(best: 9)))
-        XCTAssertTrue(cobalt.isUnlocked(for: stats(best: 10)))
     }
 
     func testProUnlocksEveryIcon() {
@@ -58,7 +56,7 @@ final class AppIconChoiceTests: XCTestCase {
         XCTAssertEqual(statuses.filter(\.isSelected).map(\.id), ["classic"])
         XCTAssertNil(statuses[0].requirementText)
         let gold = statuses.first { $0.id == "gold" }!
-        XCTAssertEqual(gold.requirementText, "\(ButtonTheme.gold.rule.requirementText), or unlock with Pro")
+        XCTAssertEqual(gold.requirementText, "Included with Pro")
     }
 
     func testStatusesReflectCurrentAlternateIcon() {

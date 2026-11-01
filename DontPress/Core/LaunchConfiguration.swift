@@ -8,6 +8,8 @@ struct LaunchConfiguration: Equatable {
     var resetStore = false
     var seedBest: Int?
     var seedTotal: Int?
+    /// UI tests only: start with Pro owned and skip the StoreKit refresh.
+    var forcePro = false
 
     static let uiTestSuiteName = "app.dontpress.uitests"
 
@@ -22,6 +24,7 @@ struct LaunchConfiguration: Equatable {
         resetStore = arguments.contains("-UITestReset")
         seedBest = value(after: "-UITestSeedBest").flatMap { Int($0) }
         seedTotal = value(after: "-UITestSeedTotal").flatMap { Int($0) }
+        forcePro = isUITestMode && arguments.contains("-UITestPro")
         #endif
     }
 
@@ -39,6 +42,7 @@ struct LaunchConfiguration: Equatable {
             if let seedTotal { stats.totalPresses = seedTotal }
             store.save(stats)
         }
+        if forcePro { store.saveIsPro(true) }
         return store
     }
 }

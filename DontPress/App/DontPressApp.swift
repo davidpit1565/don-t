@@ -6,9 +6,12 @@ struct DontPressApp: App {
     /// backgrounding or presenting the share sheet keeps this same instance alive.
     @State private var model: HomeViewModel
     @State private var proStore: ProStore
+    /// UI tests only (DEBUG): Pro is pre-set, so StoreKit must not overwrite it.
+    private let skipStoreKit: Bool
 
     init() {
         let configuration = LaunchConfiguration()
+        skipStoreKit = configuration.forcePro
         let store = configuration.makeStore()
         let service = PressService(store: store)
         let model = HomeViewModel(service: service, haptics: UIKitHaptics(), sounds: AudioEngineSounds(),
@@ -22,7 +25,7 @@ struct DontPressApp: App {
     var body: some Scene {
         WindowGroup {
             HomeView(model: model, proStore: proStore)
-                .task { await proStore.start() }
+                .task { if !skipStoreKit { await proStore.start() } }
         }
     }
 }

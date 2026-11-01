@@ -62,6 +62,8 @@ final class HomeViewModel {
         self.sounds = sounds
         self.isSoundEnabled = service.savedSoundEnabled
         if isSoundEnabled { sounds.prepare() }
+        // A saved Pro toy without Pro (e.g. after a refund) falls back to the free button.
+        if self.toys.selectedKind.requiresPro && !isPro { self.toys.select(.button) }
     }
 
     /// One accepted press. Counting happens first; reaction and haptics cannot affect it.
@@ -176,6 +178,19 @@ final class HomeViewModel {
         service.saveIsPro(value)
         selectedTheme = ButtonTheme.resolve(id: selectedTheme.id, stats: stats, isPro: value)
         if selectedTheme.id != service.savedThemeID { service.saveThemeID(selectedTheme.id) }
+        if !value && toys.selectedKind.requiresPro { toys.select(.button) }
+    }
+
+    // MARK: Pro toys
+
+    func isToyUnlocked(_ kind: ToyKind) -> Bool { !kind.requiresPro || isPro }
+
+    /// Selects a toy if it is unlocked; returns false for a Pro toy without Pro (show the offer).
+    @discardableResult
+    func selectToy(_ kind: ToyKind) -> Bool {
+        guard isToyUnlocked(kind) else { return false }
+        toys.select(kind)
+        return true
     }
 
     /// Choosing a locked style is ignored.

@@ -4,14 +4,21 @@ import SwiftUI
 /// Taps on any toy still go through the one counting path.
 struct ToyPicker: View {
     var model: HomeViewModel
+    /// Called when a Pro toy is tapped without Pro.
+    var onLockedTap: () -> Void = {}
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         HStack(spacing: DS.Spacing.s) {
             ForEach(ToyKind.allCases) { kind in
                 let selected = model.toys.selectedKind == kind
+                let locked = !model.isToyUnlocked(kind)
                 Button {
-                    withAnimation(reduceMotion ? nil : .snappy(duration: 0.25)) { model.toys.select(kind) }
+                    if locked {
+                        onLockedTap()
+                    } else {
+                        withAnimation(reduceMotion ? nil : .snappy(duration: 0.25)) { _ = model.selectToy(kind) }
+                    }
                 } label: {
                     HStack(spacing: DS.Spacing.xs + 2) {
                         ToyGlyph(kind: kind, theme: model.selectedTheme)
@@ -20,6 +27,11 @@ struct ToyPicker: View {
                             .font(.caption.weight(.semibold))
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
+                        if locked {
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 9, weight: .bold))
+                                .accessibilityHidden(true)
+                        }
                     }
                     .foregroundStyle(selected ? DS.Palette.textPrimary : DS.Palette.textSecondary)
                     .padding(.horizontal, DS.Spacing.m)
@@ -30,6 +42,7 @@ struct ToyPicker: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("\(kind.title) toy")
                 .accessibilityHint("Puts the \(kind.title.lowercased()) in the middle of the screen. Taps on it still count.")
+                .accessibilityValue(locked ? "Locked. Included with Pro" : "")
                 .accessibilityAddTraits(selected ? [.isSelected] : [])
                 .accessibilityIdentifier("toyPicker.\(kind.rawValue)")
             }

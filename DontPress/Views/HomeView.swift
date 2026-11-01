@@ -6,6 +6,7 @@ struct HomeView: View {
     @State private var isSharing = false
     @State private var shareError = false
     @State private var showCollection = false
+    @State private var showToyPro = false
     /// Set-pieces: plays the haptic plan of the active set-piece (see SetPieceEffects.swift).
     @State private var setPieceHaptics = SetPieceHaptics()
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -29,6 +30,7 @@ struct HomeView: View {
         }
         .overlay(alignment: .top) { unlockBanner }
         .sheet(isPresented: $showCollection) { CollectionView(model: model, proStore: proStore) }
+        .sheet(isPresented: $showToyPro) { ProView(proStore: proStore) }
         .background(DS.Palette.background.ignoresSafeArea())
         .preferredColorScheme(.dark)
         .alert("Couldn't make the image", isPresented: $shareError) {
@@ -49,7 +51,7 @@ struct HomeView: View {
                 newDiscoveryMarker
             }
             stats
-            ToyPicker(model: model)   // Toys: button / egg / balloon (Views/Toys)
+            ToyPicker(model: model) { showToyPro = true }   // Toys: button / egg / balloon (Views/Toys)
             shareButton
             legalLinks
         }

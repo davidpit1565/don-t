@@ -67,10 +67,10 @@ Check that sound is on in the app, the volume is up, and the ring/silent switch 
 Tap the trophy icon at the top right of the main screen. Locked items show what you need to do and your progress. Styles unlock at: Blue Mistake (run of 10), Stealth (run of 50), Radioactive (run of 250), Gold Standard (500 total presses).
 
 **What is Pro?**
-Pro is an optional one-time purchase (no subscription, no ads either way). In version 1.0 it unlocks all five button styles right away; you can also unlock them for free by playing. The app shows exactly what Pro includes, and the price, before you buy.
+Pro is an optional one-time purchase (no subscription, no ads either way). In version 1.1 it includes the Egg and the Balloon toys, four alternate app icons, and all five button styles right away (the styles can also be unlocked for free by playing). The big button, the milestone moments, the daily challenge, the streak, the Reactiondex and the share card are free. The app shows exactly what Pro includes, and the price, before you buy.
 
 **How do I restore Pro on a new iPhone or after reinstalling?**
-Open the trophy screen, tap a locked style or the Pro row, and choose "Restore Purchases". Use the same Apple ID you bought it with. Restoring is free.
+Open the trophy screen, tap a locked style, a locked toy or the Pro row, and choose "Restore Purchases". Use the same Apple ID you bought it with. Restoring is free.
 
 **Refunds or payment problems?**
 Apple handles payments and refunds at reportaproblem.apple.com. For anything else, email me.

@@ -99,7 +99,7 @@ final class V11FeatureTests: XCTestCase {
     // MARK: 2. Toys
 
     func testToysCountEveryTapAndPayOff() {
-        let app = launch()
+        let app = launch(extra: ["-UITestPro"])   // the Egg and the Balloon are Pro toys
         _ = pressButton(app)
         XCTAssertTrue(element(app, "toyPicker").waitForExistence(timeout: 5))
         let totalBefore = count(app, "totalPresses")
@@ -150,6 +150,17 @@ final class V11FeatureTests: XCTestCase {
         button.tap()
         XCTAssertEqual(count(app, "currentRun"), 13 + balloonTaps)
         XCTAssertEqual(count(app, "totalPresses"), totalBefore + 13 + balloonTaps)
+    }
+
+    func testLockedToyOpensTheProOfferWithoutPro() {
+        let app = launch()
+        _ = pressButton(app)
+        let egg = app.buttons["toyPicker.egg"]
+        XCTAssertTrue(egg.waitForExistence(timeout: 5))
+        egg.tap()
+        XCTAssertTrue(app.buttons["proRestore"].waitForExistence(timeout: 5), "a locked toy shows the Pro offer")
+        app.buttons["proClose"].tap()
+        XCTAssertTrue(pressButton(app).exists, "the free button stays selected")
     }
 
     // MARK: 3. Set-piece

@@ -144,7 +144,7 @@ final class ScreenshotTests: XCTestCase {
     }
 
     func testCaptureV11Egg() {
-        let app = launch()
+        let app = launch(["-UITestPro"])
         XCTAssertTrue(app.buttons["pressButton"].waitForExistence(timeout: 10))
         let picker = app.buttons["toyPicker.egg"]
         XCTAssertTrue(picker.waitForExistence(timeout: 5))
@@ -168,7 +168,7 @@ final class ScreenshotTests: XCTestCase {
     }
 
     func testCaptureV11Balloon() {
-        let app = launch()
+        let app = launch(["-UITestPro"])
         XCTAssertTrue(app.buttons["pressButton"].waitForExistence(timeout: 10))
         let picker = app.buttons["toyPicker.balloon"]
         XCTAssertTrue(picker.waitForExistence(timeout: 5))
