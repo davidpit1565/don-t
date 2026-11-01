@@ -1,0 +1,17 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B220EC43-535F-472F-935A-5B2D0E9F2975",
+        "deviceName" : "iPhone SE (3rd generation)",
+        "exportedFileName" : "B180D31A-496E-44AF-8041-C8FAE1771146.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "fit_0_21F7417C-256F-4908-8E68-EB6827618086.png",
+        "timestamp" : 1793575579.519
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testEverythingFitsOnOneScreen()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testEverythingFitsOnOneScreen"
+  }
+]
