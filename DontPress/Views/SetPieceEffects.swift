@@ -151,9 +151,9 @@ struct SetPieceEffectModifier: ViewModifier {
         for event in events {
             let target = start.advanced(by: .seconds(event.at))
             if clock.now < target {
-                do { try await clock.sleep(until: target, tolerance: .milliseconds(8)) } catch { return }
+                do { try await clock.sleep(until: target, tolerance: .milliseconds(8)) } catch { onFinished(piece.id); return }
             }
-            if Task.isCancelled { return }
+            if Task.isCancelled { onFinished(piece.id); return }
             switch event.kind {
             case .step(let step): apply(step)
             case .haptic(let cue): onHaptic(cue.kind)
@@ -162,11 +162,11 @@ struct SetPieceEffectModifier: ViewModifier {
 
         // Closing line, then hand control back. Taps keep counting throughout.
         withAnimation(.easeOut(duration: 0.15)) { visual.caption = piece.reactionLine }
-        do { try await clock.sleep(for: .seconds(1.4)) } catch { return }
-        if Task.isCancelled { return }
+        do { try await clock.sleep(for: .seconds(1.4)) } catch { onFinished(piece.id); return }
+        if Task.isCancelled { onFinished(piece.id); return }
         withAnimation(.easeOut(duration: 0.2)) { visual.caption = nil }
-        do { try await clock.sleep(for: .seconds(0.2)) } catch { return }
-        if Task.isCancelled { return }
+        do { try await clock.sleep(for: .seconds(0.2)) } catch { onFinished(piece.id); return }
+        if Task.isCancelled { onFinished(piece.id); return }
         onFinished(piece.id)
     }
 
