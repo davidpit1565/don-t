@@ -18,6 +18,13 @@ final class HomeViewModel {
     /// Increments once per accepted press; views may key light animation on it.
     private(set) var pressCount = 0
 
+    // MARK: Set-pieces ("the button fights back")
+    /// The set-piece currently playing over the button, if any. Purely visual: presses during
+    /// a set-piece are counted exactly like any other press. The view clears it via
+    /// `finishSetPiece(id:)` when its timeline ends.
+    private(set) var activeSetPiece: SetPiece?
+    @ObservationIgnored private var setPieceDirector = SetPieceDirector()
+
     @ObservationIgnored private let service: PressService
     @ObservationIgnored private var reactions: ReactionEngine
     @ObservationIgnored private let haptics: HapticFeedback
@@ -63,6 +70,17 @@ final class HomeViewModel {
             reactionText = reactions.reaction(forPress: result.stats.currentRun).text
             haptics.press()
         }
+
+        // Set-pieces: consulted after counting, so they can never affect it.
+        if case .start(let piece) = setPieceDirector.registerPress(milestone: result.milestone) {
+            activeSetPiece = piece
+        }
+    }
+
+    /// The view reports that a set-piece's timeline ended (or was interrupted). Stale ids are ignored.
+    func finishSetPiece(id: String) {
+        setPieceDirector.finish(id: id)
+        if activeSetPiece?.id == id { activeSetPiece = nil }
     }
 
     func dismissUnlockMessage() { unlockMessage = nil }

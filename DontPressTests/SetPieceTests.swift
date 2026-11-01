@@ -231,3 +231,52 @@ final class SetPieceDirectorTests: XCTestCase {
         XCTAssertEqual(director.playedMilestones, Set(Milestone.thresholds))
     }
 }
+
+final class HomeViewModelSetPieceTests: XCTestCase {
+    private func onMain(_ body: @MainActor () -> Void) { MainActor.assumeIsolated(body) }
+
+    @MainActor private func makeModel() -> HomeViewModel {
+        HomeViewModel(service: PressService(store: InMemoryStatsStore()), reactions: ReactionEngine(random: scripted([50, 0, 1])))
+    }
+
+    func testSetPieceStartsOnMilestoneAndTapsKeepCounting() {
+        onMain {
+            let model = makeModel()
+            for _ in 0..<9 { model.press() }
+            XCTAssertNil(model.activeSetPiece)
+            model.press()   // 10
+            XCTAssertEqual(model.activeSetPiece?.id, "flinch")
+            XCTAssertEqual(model.reactionText, ReactionCatalog.milestones[10]?.text, "the milestone reaction line is untouched")
+            for _ in 0..<5 { model.press() }
+            XCTAssertEqual(model.stats.currentRun, 15, "presses during a set-piece count exactly once each")
+            XCTAssertEqual(model.pressCount, 15)
+            XCTAssertEqual(model.activeSetPiece?.id, "flinch", "ordinary presses do not end the set-piece")
+        }
+    }
+
+    func testFinishClearsActiveSetPieceAndItNeverReplays() {
+        onMain {
+            let model = makeModel()
+            for _ in 0..<10 { model.press() }
+            XCTAssertEqual(model.activeSetPiece?.id, "flinch")
+            model.finishSetPiece(id: "other")
+            XCTAssertEqual(model.activeSetPiece?.id, "flinch", "stale ids are ignored")
+            model.finishSetPiece(id: "flinch")
+            XCTAssertNil(model.activeSetPiece)
+            for _ in 0..<15 { model.press() }  // 25
+            XCTAssertEqual(model.activeSetPiece?.id, "getaway")
+            XCTAssertEqual(model.stats.currentRun, 25)
+        }
+    }
+
+    func testNewerMilestoneReplacesRunningSetPiece() {
+        onMain {
+            let model = makeModel()
+            for _ in 0..<25 { model.press() }
+            XCTAssertEqual(model.activeSetPiece?.id, "getaway")
+            model.finishSetPiece(id: "flinch")   // late report from the interrupted one
+            XCTAssertEqual(model.activeSetPiece?.id, "getaway")
+            XCTAssertEqual(model.stats, PressStats(currentRun: 25, personalBest: 25, totalPresses: 25))
+        }
+    }
+}
