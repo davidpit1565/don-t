@@ -10,13 +10,28 @@ struct StreakState: Equatable {
     /// Day that a freeze last covered. One freeze per 7 days.
     var lastFreezeDay: Int?
 
+    /// Day indices a real clock can produce (roughly years 1 to 30000). Anything outside
+    /// comes from a corrupt store and is dropped, so day arithmetic can never overflow.
+    static let plausibleDayRange = -1_000_000...10_000_000
+
     /// Clamps anything a corrupt store could produce into a valid state.
     func sanitized() -> StreakState {
         var copy = self
         copy.current = max(current, 0)
         copy.best = max(best, copy.current)
+        if let day = copy.lastPlayedDay, !Self.plausibleDayRange.contains(day) { copy.lastPlayedDay = nil }
+        if let day = copy.lastFreezeDay, !Self.plausibleDayRange.contains(day) { copy.lastFreezeDay = nil }
         if copy.lastPlayedDay == nil { copy.current = 0 }
         return copy
+    }
+}
+
+extension Int {
+    /// `self - other`, clamped instead of trapping on overflow (for day-index gaps).
+    func saturatingDistance(to other: Int) -> Int {
+        let (diff, overflow) = self.subtractingReportingOverflow(other)
+        if !overflow { return diff }
+        return self > other ? Int.max : Int.min
     }
 }
 
@@ -31,7 +46,7 @@ enum StreakTracker {
         guard let used = state.lastFreezeDay else { return true }
         // A freeze recorded "in the future" (clock moved) never blocks: treat as available.
         if used > missedDay { return true }
-        return missedDay - used >= freezeInterval
+        return missedDay.saturatingDistance(to: used) >= freezeInterval
     }
 
     /// Records that the user played on `day`. Idempotent for the same day.
@@ -50,7 +65,7 @@ enum StreakTracker {
 
         if today < last {
             // Small backward move (time-zone change): keep everything as it is.
-            if last - today <= toleratedBackwardDays { return state }
+            if last.saturatingDistance(to: today) <= toleratedBackwardDays { return state }
             // Large backward move: the clock was wrong before (or now). Restart safely.
             state.lastPlayedDay = today
             state.current = 1
@@ -58,7 +73,7 @@ enum StreakTracker {
             return state
         }
 
-        let gap = today - last
+        let gap = today.saturatingDistance(to: last)
         if gap == 1 {
             state.current = state.current.saturatingIncremented()
         } else if gap == 2, isFreezeAvailable(state, forMissedDay: today - 1) {
@@ -77,7 +92,7 @@ enum StreakTracker {
     static func displayedStreak(_ input: StreakState, on day: DayStamp) -> Int {
         let state = input.sanitized()
         guard let last = state.lastPlayedDay else { return 0 }
-        let gap = day.index - last
+        let gap = day.index.saturatingDistance(to: last)
         if gap <= 1 { return state.current }   // today, yesterday, or a small backward hop
         if gap == 2, isFreezeAvailable(state, forMissedDay: day.index - 1) { return state.current }
         return 0
@@ -87,7 +102,7 @@ enum StreakTracker {
     static func isRelyingOnFreeze(_ input: StreakState, on day: DayStamp) -> Bool {
         let state = input.sanitized()
         guard let last = state.lastPlayedDay, state.current > 0 else { return false }
-        return day.index - last == 2 && isFreezeAvailable(state, forMissedDay: day.index - 1)
+        return day.index.saturatingDistance(to: last) == 2 && isFreezeAvailable(state, forMissedDay: day.index - 1)
     }
 
     /// Whether a freeze is currently banked (not used in the last 7 days).
