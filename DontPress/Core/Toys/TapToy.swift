@@ -4,11 +4,12 @@ import Foundation
 /// Every accepted tap on any kind goes through the one counting path (`PressService.registerPress()`);
 /// toys only decorate those taps with a small state machine and a payoff.
 enum ToyKind: String, CaseIterable, Identifiable {
-    case button, egg, balloon
+    case button, egg, balloon, pinata
 
     var id: String { rawValue }
 
-    /// The egg and the balloon are part of Pro; the big button is always free.
+    /// The egg, the balloon and the piñata are part of Pro; the big button is always free.
+    /// The piñata additionally needs play (see `PinataGate`).
     var requiresPro: Bool { self != .button }
 
     var title: String {
@@ -16,6 +17,7 @@ enum ToyKind: String, CaseIterable, Identifiable {
         case .button: return "Button"
         case .egg: return "Egg"
         case .balloon: return "Balloon"
+        case .pinata: return "Piñata"
         }
     }
 

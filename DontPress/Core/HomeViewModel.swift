@@ -62,8 +62,9 @@ final class HomeViewModel {
         self.sounds = sounds
         self.isSoundEnabled = service.savedSoundEnabled
         if isSoundEnabled { sounds.prepare() }
-        // A saved Pro toy without Pro (e.g. after a refund) falls back to the free button.
-        if self.toys.selectedKind.requiresPro && !isPro { self.toys.select(.button) }
+        // A saved toy whose gate is no longer met (Pro refunded, or the piñata's play threshold not
+        // reached on this device) falls back to the free button.
+        if !isToyUnlocked(self.toys.selectedKind) { self.toys.select(.button) }
     }
 
     /// One accepted press. Counting happens first; reaction and haptics cannot affect it.
@@ -78,10 +79,13 @@ final class HomeViewModel {
         let newAchievements = Achievement.newlyUnlocked(before: before, after: result.stats)
         // With Pro everything is already unlocked, so earning a style is not news.
         let newThemes = isPro ? [] : ButtonTheme.newlyUnlocked(before: before, after: result.stats)
-        if !newAchievements.isEmpty || !newThemes.isEmpty {
+        // feat-pinata: the press that crosses the play threshold (with Pro) hangs the piñata.
+        let pinataUnlocked = PinataGate.newlyUnlocked(before: before.totalPresses, after: result.stats.totalPresses, isPro: isPro)
+        if !newAchievements.isEmpty || !newThemes.isEmpty || pinataUnlocked {
             var parts: [String] = []
             if !newAchievements.isEmpty { parts.append("Achievement: " + newAchievements.map(\.title).joined(separator: ", ")) }
             if !newThemes.isEmpty { parts.append("New button style: " + newThemes.map(\.name).joined(separator: ", ")) }
+            if pinataUnlocked { parts.append("New toy: Piñata") }
             unlockMessage = parts.joined(separator: " · ")
         }
 
@@ -166,7 +170,11 @@ final class HomeViewModel {
         if let payoffLine = toys.tapSelected() {
             reactionText = payoffLine
             haptics.milestone()
-            playSound(toys.selectedKind == .egg ? .eggHatch : .balloonPop)
+            switch toys.selectedKind {
+            case .egg: playSound(.eggHatch)
+            case .pinata: playSound(.achievement)   // feat-pinata: burst reuses the fanfare
+            default: playSound(.balloonPop)
+            }
         }
     }
 
@@ -178,12 +186,19 @@ final class HomeViewModel {
         service.saveIsPro(value)
         selectedTheme = ButtonTheme.resolve(id: selectedTheme.id, stats: stats, isPro: value)
         if selectedTheme.id != service.savedThemeID { service.saveThemeID(selectedTheme.id) }
-        if !value && toys.selectedKind.requiresPro { toys.select(.button) }
+        if !isToyUnlocked(toys.selectedKind) { toys.select(.button) }
     }
 
     // MARK: Pro toys
 
-    func isToyUnlocked(_ kind: ToyKind) -> Bool { !kind.requiresPro || isPro }
+    /// Pro toys need Pro; the piñata needs Pro AND `PinataGate.minTotalPresses` total presses (feat-pinata).
+    func isToyUnlocked(_ kind: ToyKind) -> Bool {
+        if kind == .pinata { return PinataGate.isUnlocked(totalPresses: stats.totalPresses, isPro: isPro) }
+        return !kind.requiresPro || isPro
+    }
+
+    /// feat-pinata: picker caption for a locked piñata, e.g. "1,200/5,000 · Pro".
+    var pinataProgressText: String { PinataGate.progressText(totalPresses: stats.totalPresses, isPro: isPro) }
 
     /// Selects a toy if it is unlocked; returns false for a Pro toy without Pro (show the offer).
     @discardableResult

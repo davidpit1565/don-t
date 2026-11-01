@@ -36,6 +36,9 @@ protocol StatsStoring: AnyObject {
     /// Ids of creatures hatched from the egg so far.
     func loadDiscoveredCreatureIDs() -> [String]
     func saveDiscoveredCreatureIDs(_ ids: [String])
+    /// Ids of prizes that have fallen out of the piñata so far (feat-pinata).
+    func loadDiscoveredPinataPrizeIDs() -> [String]
+    func saveDiscoveredPinataPrizeIDs(_ ids: [String])
 }
 
 /// Lightweight local store. Missing, negative, or wrongly typed values read as 0.
@@ -48,6 +51,7 @@ final class UserDefaultsStatsStore: StatsStoring {
     static let discoveredReactionsKey = "dontpress.discoveredReactions"
     static let toyKey = "dontpress.selectedToy"
     static let creaturesKey = "dontpress.discoveredCreatures"
+    static let pinataPrizesKey = "dontpress.discoveredPinataPrizes"
 
     private let defaults: UserDefaults
 
@@ -88,6 +92,8 @@ final class UserDefaultsStatsStore: StatsStoring {
     /// Wrong type reads as nothing discovered.
     func loadDiscoveredCreatureIDs() -> [String] { (defaults.object(forKey: Self.creaturesKey) as? [String]) ?? [] }
     func saveDiscoveredCreatureIDs(_ ids: [String]) { defaults.set(ids, forKey: Self.creaturesKey) }
+    func loadDiscoveredPinataPrizeIDs() -> [String] { (defaults.object(forKey: Self.pinataPrizesKey) as? [String]) ?? [] }
+    func saveDiscoveredPinataPrizeIDs(_ ids: [String]) { defaults.set(ids, forKey: Self.pinataPrizesKey) }
 
     private func readCounter(_ key: String) -> Int {
         guard let raw = defaults.object(forKey: key) else { return 0 }
@@ -144,6 +150,7 @@ final class InMemoryStatsStore: StatsStoring {
     private var discoveredReactionIDs: [String] = []
     private var selectedToyID: String?
     private var discoveredCreatureIDs: [String] = []
+    private var discoveredPinataPrizeIDs: [String] = []
 
     init(_ stats: PersistedStats = PersistedStats(), themeID: String? = nil) {
         self.stats = stats
@@ -164,6 +171,8 @@ final class InMemoryStatsStore: StatsStoring {
     func saveSelectedToyID(_ id: String) { selectedToyID = id }
     func loadDiscoveredCreatureIDs() -> [String] { discoveredCreatureIDs }
     func saveDiscoveredCreatureIDs(_ ids: [String]) { discoveredCreatureIDs = ids }
+    func loadDiscoveredPinataPrizeIDs() -> [String] { discoveredPinataPrizeIDs }
+    func saveDiscoveredPinataPrizeIDs(_ ids: [String]) { discoveredPinataPrizeIDs = ids }
 
     func load() -> PersistedStats { stats }
     func save(_ stats: PersistedStats) { self.stats = stats }

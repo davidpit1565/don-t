@@ -9,7 +9,10 @@ final class ToySession {
     private(set) var selectedKind: ToyKind
     private(set) var egg: EggToy
     private(set) var balloon: BalloonToy
+    private(set) var pinata: PinataToy
     private(set) var discoveredCreatureIDs: Set<String>
+    /// feat-pinata: prizes that have spilled out so far.
+    private(set) var discoveredPrizeIDs: Set<String>
     /// Increments on every payoff (hatch or pop); views may key one-shot animations on it.
     private(set) var payoffCount = 0
 
@@ -20,7 +23,9 @@ final class ToySession {
         self.selectedKind = ToyKind.resolve(id: store.loadSelectedToyID())
         self.egg = EggToy(random: random)
         self.balloon = BalloonToy(random: random)
+        self.pinata = PinataToy(random: random)
         self.discoveredCreatureIDs = Set(store.loadDiscoveredCreatureIDs().filter { CreatureCatalog.creature(id: $0) != nil })
+        self.discoveredPrizeIDs = Set(store.loadDiscoveredPinataPrizeIDs().filter { PinataPrizeCatalog.prize(id: $0) != nil })
     }
 
     func select(_ kind: ToyKind) {
@@ -44,6 +49,11 @@ final class ToySession {
             guard let line = balloon.tap() else { return nil }
             payoffCount &+= 1
             return line
+        case .pinata:
+            guard let prize = pinata.tap() else { return nil }
+            discover(prize)
+            payoffCount &+= 1
+            return prize.burstLine
         }
     }
 
@@ -51,11 +61,23 @@ final class ToySession {
     func clearPayoff() {
         if egg.isResolved { egg.reset() }
         if balloon.isResolved { balloon.reset() }
+        if pinata.isResolved { pinata.reset() }
     }
 
     var discoveredCreatures: [Creature] { CreatureCatalog.all.filter { discoveredCreatureIDs.contains($0.id) } }
 
     func isDiscovered(_ creature: Creature) -> Bool { discoveredCreatureIDs.contains(creature.id) }
+
+    // MARK: feat-pinata
+    var discoveredPrizes: [PinataPrize] { PinataPrizeCatalog.all.filter { discoveredPrizeIDs.contains($0.id) } }
+
+    func isDiscovered(_ prize: PinataPrize) -> Bool { discoveredPrizeIDs.contains(prize.id) }
+
+    private func discover(_ prize: PinataPrize) {
+        guard !discoveredPrizeIDs.contains(prize.id) else { return }
+        discoveredPrizeIDs.insert(prize.id)
+        store.saveDiscoveredPinataPrizeIDs(discoveredPrizeIDs.sorted())
+    }
 
     private func discover(_ creature: Creature) {
         guard !discoveredCreatureIDs.contains(creature.id) else { return }

@@ -13,7 +13,8 @@ final class TapToyTests: XCTestCase {
         XCTAssertEqual(ToyKind.resolve(id: "spaceship"), .button)
         XCTAssertEqual(ToyKind.resolve(id: "egg"), .egg)
         XCTAssertEqual(ToyKind.resolve(id: "balloon"), .balloon)
-        XCTAssertEqual(ToyKind.allCases.count, 3)
+        XCTAssertEqual(ToyKind.resolve(id: "pinata"), .pinata)
+        XCTAssertEqual(ToyKind.allCases.count, 4)
     }
 
     // MARK: Egg
