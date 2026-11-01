@@ -2,6 +2,8 @@ name: iOS build, test and screenshots
 
 on:
   pull_request:
+  push:
+    branches: [claude/v1.1]
   workflow_dispatch:
 
 permissions:
@@ -63,7 +65,7 @@ jobs:
             build/xcodebuild.log
 
       - name: Publish screenshots to ci-screenshots branch
-        if: always() && github.event.pull_request.head.repo.full_name == github.repository
+        if: always() && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
         run: |
           [ -n "$(ls -A screenshots 2>/dev/null)" ] || exit 0
           git config user.name "github-actions"
