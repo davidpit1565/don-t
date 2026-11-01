@@ -44,6 +44,7 @@ struct HomeView: View {
             buttonArea(fixedDiameter: fixedDiameter)
             reactionLine
             stats
+            ToyPicker(model: model)   // Toys: button / egg / balloon (Views/Toys)
             shareButton
             legalLinks
         }
@@ -55,14 +56,25 @@ struct HomeView: View {
     @ViewBuilder
     private func buttonArea(fixedDiameter: CGFloat?) -> some View {
         if let fixedDiameter {
-            pressButton(diameter: fixedDiameter)
+            focalToy(diameter: fixedDiameter)
         } else {
             GeometryReader { geo in
                 let diameter = max(min(geo.size.width, geo.size.height, 340), 120)
-                pressButton(diameter: diameter)
+                focalToy(diameter: diameter)
                     .frame(width: geo.size.width, height: geo.size.height)
             }
             .frame(minHeight: 140)
+        }
+    }
+
+    // MARK: Toys (Views/Toys): whatever is selected fills the same flexible square.
+
+    @ViewBuilder
+    private func focalToy(diameter: CGFloat) -> some View {
+        switch model.toys.selectedKind {
+        case .button: pressButton(diameter: diameter)
+        case .egg: EggToyView(model: model, size: diameter)
+        case .balloon: BalloonToyView(model: model, size: diameter)
         }
     }
 

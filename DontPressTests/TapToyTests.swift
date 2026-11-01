@@ -196,7 +196,8 @@ final class TapToyTests: XCTestCase {
     func testSessionRecordsAndPersistsDiscoveredCreatures() {
         onMain {
             let store = InMemoryStatsStore()
-            let session = ToySession(store: store, random: scripted([0, 50, 3, 0, 0, 10, 1]))
+            // Draw order: egg threshold (0 -> 5 taps), balloon threshold, hatch rarity roll (50 -> common), index 3.
+            let session = ToySession(store: store, random: scripted([0, 5, 50, 3, 0, 0, 10, 1]))
             session.select(.egg)
             var payoffs: [String] = []
             for _ in 0..<5 { if let line = session.tapSelected() { payoffs.append(line) } }
