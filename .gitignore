@@ -7,3 +7,4 @@ DerivedData/
 
 # agent worktrees (local only)
 .claude/worktrees/
+__pycache__/
