@@ -387,3 +387,45 @@ final class ProNudgeSchedulerTests: XCTestCase {
         XCTAssertEqual(store.load(), PersistedStats(personalBest: 12, totalPresses: 99))
     }
 }
+
+// MARK: - Moments wired from press()
+final class ProNudgeWiringTests: XCTestCase {
+    @MainActor
+    private func model(total: Int, isPro: Bool = false) -> (HomeViewModel, ProNudgeScheduler) {
+        let store = InMemoryStatsStore()
+        store.save(PersistedStats(personalBest: 0, totalPresses: total))
+        let scheduler = ProNudgeScheduler(store: store)
+        let m = HomeViewModel(service: PressService(store: store), nudges: scheduler)
+        if isPro { m.setPro(true) }
+        return (m, scheduler)
+    }
+
+    func testCrossingEightyPercentOffersNearUnlockOnceAndCountsNormally() {
+        MainActor.assumeIsolated {
+            let (m, s) = model(total: 239)            // egg at 300: 80% = 240
+            m.press()
+            XCTAssertEqual(m.stats.totalPresses, 240)
+            if case .nearUnlock(let toy, _)? = s.pending?.moment { XCTAssertEqual(toy, .egg) } else { XCTFail("no near-unlock moment") }
+        }
+    }
+
+    func testCrossingTheThresholdOffersUnlockedByPlay() {
+        MainActor.assumeIsolated {
+            let (m, s) = model(total: 299)
+            m.press()
+            XCTAssertEqual(s.pending?.moment, .toyUnlockedByPlay(.egg))
+        }
+    }
+
+    func testNothingIsOfferedAwayFromThresholdsOrWithPro() {
+        MainActor.assumeIsolated {
+            let (m, s) = model(total: 100)
+            m.press()
+            XCTAssertNil(s.pending)
+            let (p, ps) = model(total: 299, isPro: true)
+            p.press()
+            XCTAssertNil(ps.pending)
+            XCTAssertEqual(p.stats.totalPresses, 300)
+        }
+    }
+}

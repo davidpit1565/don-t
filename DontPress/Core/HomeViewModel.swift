@@ -90,6 +90,18 @@ final class HomeViewModel {
         let pinataUnlocked = PinataGate.newlyUnlocked(before: before.totalPresses, after: result.stats.totalPresses, isPro: isPro)
         // Progression: toys earned by play (exactly once per crossing; with Pro it is not news).
         let newToys = isPro ? [] : ProgressionRules.newlyUnlockedByPlay(before: before, after: result.stats)
+        // Soft Pro moments (never while counting; shown later only if every scheduler rule allows it).
+        if !isPro {
+            if let kind = newToys.first {
+                offerProMoment(.toyUnlockedByPlay(kind))
+            } else {
+                for kind in [ToyKind.egg, .balloon] {
+                    let a = ProgressionRules.fractionToUnlock(for: kind, stats: before)
+                    let b = ProgressionRules.fractionToUnlock(for: kind, stats: result.stats)
+                    if a < 0.8, b >= 0.8, b < 1 { offerProMoment(.nearUnlock(toy: kind, progress: b)); break }
+                }
+            }
+        }
         if !newAchievements.isEmpty || !newThemes.isEmpty || !newToys.isEmpty || pinataUnlocked {
             var parts: [String] = []
             if !newAchievements.isEmpty { parts.append("Achievement: " + newAchievements.map(\.title).joined(separator: ", ")) }
