@@ -221,7 +221,8 @@ struct HomeView: View {
 
     @ViewBuilder
     private var unlockBanner: some View {
-        if let message = model.unlockMessage {
+        // Waits for a running set-piece to finish so the banner and its caption never collide.
+        if let message = model.unlockMessage, model.activeSetPiece == nil {
             Text(message)
                 .font(.footnote.weight(.semibold))
                 .foregroundStyle(DS.Palette.textPrimary)
