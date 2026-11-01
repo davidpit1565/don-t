@@ -15,6 +15,9 @@ protocol StatsStoring: AnyObject {
     /// Last known Pro entitlement (StoreKit stays the source of truth; this avoids a flicker at launch).
     func loadIsPro() -> Bool
     func saveIsPro(_ value: Bool)
+    // Reactiondex: ids of reaction lines this device has seen.
+    func loadDiscoveredReactionIDs() -> [String]
+    func saveDiscoveredReactionIDs(_ ids: [String])
 }
 
 /// Lightweight local store. Missing, negative, or wrongly typed values read as 0.
@@ -23,6 +26,7 @@ final class UserDefaultsStatsStore: StatsStoring {
     static let totalKey = "dontpress.totalPresses"
     static let themeKey = "dontpress.buttonTheme"
     static let proKey = "dontpress.isPro"
+    static let discoveredReactionsKey = "dontpress.discoveredReactions"
 
     private let defaults: UserDefaults
 
@@ -47,6 +51,14 @@ final class UserDefaultsStatsStore: StatsStoring {
     func loadIsPro() -> Bool { (defaults.object(forKey: Self.proKey) as? Bool) ?? false }
     func saveIsPro(_ value: Bool) { defaults.set(value, forKey: Self.proKey) }
 
+    // Reactiondex. A wrongly typed value reads as empty.
+    func loadDiscoveredReactionIDs() -> [String] {
+        (defaults.object(forKey: Self.discoveredReactionsKey) as? [String]) ?? []
+    }
+    func saveDiscoveredReactionIDs(_ ids: [String]) {
+        defaults.set(Array(Set(ids)).sorted(), forKey: Self.discoveredReactionsKey)
+    }
+
     private func readCounter(_ key: String) -> Int {
         guard let raw = defaults.object(forKey: key) else { return 0 }
         if let value = raw as? Int { return Swift.max(value, 0) }
@@ -59,6 +71,7 @@ final class InMemoryStatsStore: StatsStoring {
     private var stats: PersistedStats
     private var themeID: String?
     private var isPro = false
+    private var discoveredReactionIDs: [String] = []
 
     init(_ stats: PersistedStats = PersistedStats(), themeID: String? = nil) {
         self.stats = stats
@@ -69,6 +82,8 @@ final class InMemoryStatsStore: StatsStoring {
     func saveThemeID(_ id: String) { themeID = id }
     func loadIsPro() -> Bool { isPro }
     func saveIsPro(_ value: Bool) { isPro = value }
+    func loadDiscoveredReactionIDs() -> [String] { discoveredReactionIDs }
+    func saveDiscoveredReactionIDs(_ ids: [String]) { discoveredReactionIDs = Array(Set(ids)).sorted() }
 
     func load() -> PersistedStats { stats }
     func save(_ stats: PersistedStats) { self.stats = stats }
