@@ -22,8 +22,8 @@ final class HomeViewModelDailyTests: XCTestCase {
     func testPressFeedsDailyTrackerAndShareCard() {
         onMain {
             let store = InMemoryStatsStore()
-            let clock = date(2026, 3, 10)
-            let tracker = DailyTracker(store: store, calendar: { pinnedCalendar("UTC") }, now: { clock })
+            let clock = dailyTestDate(2026, 3, 10)
+            let tracker = DailyTracker(store: store, calendar: { dailyTestCalendar("UTC") }, now: { clock })
             let model = HomeViewModel(service: PressService(store: store), reactions: ReactionEngine(random: scripted([50, 0, 1])), daily: tracker)
             XCTAssertEqual(model.daily?.pressesToday, 0)
 
@@ -34,7 +34,7 @@ final class HomeViewModelDailyTests: XCTestCase {
             XCTAssertNotNil(tracker.signatureReaction)
 
             let card = model.shareContent
-            XCTAssertEqual(card?.dayText, "DAY \(DailyChallenge(date: clock, calendar: pinnedCalendar()).dayNumber)")
+            XCTAssertEqual(card?.dayText, "DAY \(DailyChallenge(date: clock, calendar: dailyTestCalendar()).dayNumber)")
             XCTAssertEqual(card?.streakText, "1-DAY STREAK")
             XCTAssertNotNil(card?.signatureLine)
             XCTAssertNotNil(model.dailyShareContent)
@@ -45,11 +45,11 @@ final class HomeViewModelDailyTests: XCTestCase {
         onMain {
             let store = InMemoryStatsStore()
             // Find a day in March 2026 with an "exactly" challenge.
-            let day = (1...31).map { date(2026, 3, $0) }.first {
-                if case .exactly = DailyChallenge(date: $0, calendar: pinnedCalendar()).kind { return true }
+            let day = (1...31).map { dailyTestDate(2026, 3, $0) }.first {
+                if case .exactly = DailyChallenge(date: $0, calendar: dailyTestCalendar()).kind { return true }
                 return false
             }!
-            let tracker = DailyTracker(store: store, calendar: { pinnedCalendar("UTC") }, now: { day })
+            let tracker = DailyTracker(store: store, calendar: { dailyTestCalendar("UTC") }, now: { day })
             let model = HomeViewModel(service: PressService(store: store), daily: tracker)
             let target = model.daily!.challenge.target
             for _ in 0..<(target - 1) { model.press() }

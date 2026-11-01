@@ -6,14 +6,14 @@ import XCTest
 #endif
 
 /// Calendar pinned to an explicit time zone, so results do not depend on the machine running the tests.
-func pinnedCalendar(_ zone: String = "UTC", identifier: Calendar.Identifier = .gregorian) -> Calendar {
+func dailyTestCalendar(_ zone: String = "UTC", identifier: Calendar.Identifier = .gregorian) -> Calendar {
     var calendar = Calendar(identifier: identifier)
     calendar.timeZone = TimeZone(identifier: zone)!
     return calendar
 }
 
-func date(_ year: Int, _ month: Int, _ day: Int, hour: Int = 12, minute: Int = 0, zone: String = "UTC") -> Date {
-    let calendar = pinnedCalendar(zone)
+func dailyTestDate(_ year: Int, _ month: Int, _ day: Int, hour: Int = 12, minute: Int = 0, zone: String = "UTC") -> Date {
+    let calendar = dailyTestCalendar(zone)
     return calendar.date(from: DateComponents(year: year, month: month, day: day, hour: hour, minute: minute))!
 }
 
@@ -26,43 +26,43 @@ final class DailyChallengeTests: XCTestCase {
     }
 
     func testDayNumberStartsAtOneOnEpoch() {
-        XCTAssertEqual(DailyChallenge(date: date(2026, 1, 1), calendar: pinnedCalendar()).dayNumber, 1)
-        XCTAssertEqual(DailyChallenge(date: date(2026, 1, 2), calendar: pinnedCalendar()).dayNumber, 2)
-        XCTAssertEqual(DailyChallenge(date: date(2026, 11, 1), calendar: pinnedCalendar()).dayNumber, 305)
-        XCTAssertEqual(DailyChallenge(date: date(2025, 12, 31), calendar: pinnedCalendar()).dayNumber, 0)
+        XCTAssertEqual(DailyChallenge(date: dailyTestDate(2026, 1, 1), calendar: dailyTestCalendar()).dayNumber, 1)
+        XCTAssertEqual(DailyChallenge(date: dailyTestDate(2026, 1, 2), calendar: dailyTestCalendar()).dayNumber, 2)
+        XCTAssertEqual(DailyChallenge(date: dailyTestDate(2026, 11, 1), calendar: dailyTestCalendar()).dayNumber, 305)
+        XCTAssertEqual(DailyChallenge(date: dailyTestDate(2025, 12, 31), calendar: dailyTestCalendar()).dayNumber, 0)
     }
 
     func testLocalDayFollowsTheUsersTimeZone() {
         // 23:30 in Los Angeles on 1 March is already 2 March in UTC.
-        let instant = date(2026, 3, 1, hour: 23, minute: 30, zone: "America/Los_Angeles")
-        XCTAssertEqual(DayStamp(date: instant, calendar: pinnedCalendar("America/Los_Angeles")).index,
+        let instant = dailyTestDate(2026, 3, 1, hour: 23, minute: 30, zone: "America/Los_Angeles")
+        XCTAssertEqual(DayStamp(date: instant, calendar: dailyTestCalendar("America/Los_Angeles")).index,
                        DayStamp.index(year: 2026, month: 3, day: 1))
-        XCTAssertEqual(DayStamp(date: instant, calendar: pinnedCalendar("UTC")).index,
+        XCTAssertEqual(DayStamp(date: instant, calendar: dailyTestCalendar("UTC")).index,
                        DayStamp.index(year: 2026, month: 3, day: 2))
     }
 
     func testSameLocalDateGivesSameChallengeEverywhere() {
-        let tokyo = DailyChallenge(date: date(2026, 6, 15, hour: 8, zone: "Asia/Tokyo"), calendar: pinnedCalendar("Asia/Tokyo"))
-        let ny = DailyChallenge(date: date(2026, 6, 15, hour: 22, zone: "America/New_York"), calendar: pinnedCalendar("America/New_York"))
+        let tokyo = DailyChallenge(date: dailyTestDate(2026, 6, 15, hour: 8, zone: "Asia/Tokyo"), calendar: dailyTestCalendar("Asia/Tokyo"))
+        let ny = DailyChallenge(date: dailyTestDate(2026, 6, 15, hour: 22, zone: "America/New_York"), calendar: dailyTestCalendar("America/New_York"))
         XCTAssertEqual(tokyo, ny)
     }
 
     func testDSTDoesNotSkipOrRepeatDays() {
-        let calendar = pinnedCalendar("Europe/London")
+        let calendar = dailyTestCalendar("Europe/London")
         // Clocks go forward 29 March 2026 and back 25 October 2026.
-        let before = DayStamp(date: date(2026, 3, 28, hour: 23, zone: "Europe/London"), calendar: calendar)
-        let after = DayStamp(date: date(2026, 3, 29, hour: 0, minute: 30, zone: "Europe/London"), calendar: calendar)
+        let before = DayStamp(date: dailyTestDate(2026, 3, 28, hour: 23, zone: "Europe/London"), calendar: calendar)
+        let after = DayStamp(date: dailyTestDate(2026, 3, 29, hour: 0, minute: 30, zone: "Europe/London"), calendar: calendar)
         XCTAssertEqual(after.index - before.index, 1)
-        let lateOct = DayStamp(date: date(2026, 10, 25, hour: 23, minute: 59, zone: "Europe/London"), calendar: calendar)
+        let lateOct = DayStamp(date: dailyTestDate(2026, 10, 25, hour: 23, minute: 59, zone: "Europe/London"), calendar: calendar)
         XCTAssertEqual(lateOct.index, DayStamp.index(year: 2026, month: 10, day: 25))
     }
 
     func testNonGregorianCalendarsUseTheSameDay() {
-        let instant = date(2026, 5, 5)
-        XCTAssertEqual(DayStamp(date: instant, calendar: pinnedCalendar(identifier: .buddhist)),
-                       DayStamp(date: instant, calendar: pinnedCalendar()))
-        XCTAssertEqual(DayStamp(date: instant, calendar: pinnedCalendar(identifier: .hebrew)),
-                       DayStamp(date: instant, calendar: pinnedCalendar()))
+        let instant = dailyTestDate(2026, 5, 5)
+        XCTAssertEqual(DayStamp(date: instant, calendar: dailyTestCalendar(identifier: .buddhist)),
+                       DayStamp(date: instant, calendar: dailyTestCalendar()))
+        XCTAssertEqual(DayStamp(date: instant, calendar: dailyTestCalendar(identifier: .hebrew)),
+                       DayStamp(date: instant, calendar: dailyTestCalendar()))
     }
 
     func testGenerationIsDeterministicAndPinned() {

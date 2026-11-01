@@ -95,9 +95,9 @@ final class StreakTrackerTests: XCTestCase {
 }
 
 final class DailyTrackerTests: XCTestCase {
-    private var clock = date(2026, 3, 10, hour: 9)
+    private var clock = dailyTestDate(2026, 3, 10, hour: 9)
     private func tracker(_ store: StatsStoring) -> DailyTracker {
-        DailyTracker(store: store, calendar: { pinnedCalendar("UTC") }, now: { [unowned self] in self.clock })
+        DailyTracker(store: store, calendar: { dailyTestCalendar("UTC") }, now: { [unowned self] in self.clock })
     }
 
     func testPressesCountPerDayAndResetAtMidnight() {
@@ -109,7 +109,7 @@ final class DailyTrackerTests: XCTestCase {
         XCTAssertEqual(daily.snapshot.pressesToday, 2)
         XCTAssertEqual(daily.snapshot.streak, 1)
 
-        clock = date(2026, 3, 11, hour: 0, minute: 1)
+        clock = dailyTestDate(2026, 3, 11, hour: 0, minute: 1)
         XCTAssertEqual(daily.snapshot.pressesToday, 0, "a new day starts fresh")
         XCTAssertEqual(daily.snapshot.streak, 1, "still alive")
         daily.recordPress()

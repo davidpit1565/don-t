@@ -129,6 +129,7 @@ enum RarityTitle {
 /// No-spoiler card for today's challenge: shows the outcome and the streak, never the target
 /// or the press count (which would give the answer away).
 struct DailyShareContent: Equatable {
+    let result: ChallengeResult
     let title: String
     let dayText: String
     let resultTitle: String
@@ -147,6 +148,7 @@ struct DailyShareContent: Equatable {
         case .pending: (resultTitle, resultLine) = ("STILL PRESSING", "The verdict is pending. So is my dignity.")
         }
         return DailyShareContent(
+            result: snapshot.result,
             title: ShareCardContent.cardTitle,
             dayText: "DAILY #\(ShareCardContent.formatCount(number, locale: locale))",
             resultTitle: resultTitle,
