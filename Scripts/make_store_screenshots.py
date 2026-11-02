@@ -5,7 +5,7 @@ screenshots captured by CI (ScreenshotTests) and the app's own share-card render
 usage: make_store_screenshots.py <dir with CI png files> <output dir> [--set v10|v11]
 
   --set v10 (default)  the 1.0 slide set (8 slides).
-  --set v11            the 1.1 slide set (8 slides): set-pieces, egg, balloon, daily challenge,
+  --set v11            the 1.1 slide set (9 slides; 10 with --with-pro-slide): set-pieces, egg, balloon, daily challenge,
                        Reactiondex and the v2 share card, from the `v11-*` captures in
                        DontPressUITests/ScreenshotTests.swift. A slide whose capture (and its
                        same-feature fallback) is missing is skipped with a warning, never faked.
@@ -16,6 +16,7 @@ import argparse, os, sys
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 SRC = OUT = None   # set in main()
+WITH_PRO_SLIDE = False
 W, H = 1320, 2868
 BG, RED, WHITE, GRAY = (11, 11, 13), (255, 51, 71), (247, 247, 248), (150, 150, 159)
 FONT = "/usr/share/fonts/opentype/inter/Inter-{}.otf"
@@ -156,14 +157,20 @@ def build_v11():
          "Push it far enough and the button makes a scene.",
          ("v11-setpiece-25", "v11-setpiece-50-lock")),
         ("03-crack.png", [[R("Crack it.")]],
-         "Tap the egg until something hatches. (Pro)", ("v11-egg-hatch", "v11-egg-crack")),
+         "Tap the egg until something hatches. Earn it, or get Pro.", ("v11-egg-hatch", "v11-egg-crack")),
         ("04-pop.png", [[Wt("Every tap")], [R("inflates it.")]],
-         "When it pops is a secret. (Pro)", ("v11-balloon", "v11-balloon-pop")),
-        ("05-daily.png", [[Wt("One challenge")], [R("a day.")]],
+         "When it pops is a secret. Earn it, or get Pro.", ("v11-balloon-pop", "v11-balloon")),
+        ("05-pinata.png", [[Wt("Whack it.")], [R("See what falls.")]],
+         "The mythic Piñata. Pro, plus 5,000 total presses.", ("v11-pinata-burst", "v11-pinata")),
+        ("06-daily.png", [[Wt("One challenge")], [R("a day.")]],
          "Same challenge for everyone. Keep your streak.", ("v11-daily",)),
-        ("06-reactiondex.png", [[Wt("Collect every")], [R("reaction.")]],
+        ("07-reactiondex.png", [[Wt("Collect every")], [R("reaction.")]],
          "Every line you find lands in the Reactiondex.", ("v11-reactiondex",)),
     ]
+    if WITH_PRO_SLIDE:
+        # Opt-in: the capture shows the price from the CI StoreKit test config, not the real App Store price.
+        slides.append(("10-pro.png", [[Wt("Pro. Once.")], [R("No subscription.")]],
+                       "Toys, styles and icons. The offer shows the price first.", ("12-pro-offer",)))
     for name, lines, sub, shots in slides:
         shot = find(*shots)
         if shot is None:
@@ -174,26 +181,28 @@ def build_v11():
     # 07: the v2 share card exactly as ShareImageRenderer draws it (ShareCardRenderTests).
     card = find("07-share-card-847", "09-share-card-v2-full")
     if card is None:
-        print("skipped 07-share.png: no share-card render found", file=sys.stderr)
+        print("skipped 08-share.png: no share-card render found", file=sys.stderr)
     else:
-        slide_card("07-share.png", [[Wt("Share your")], [R("shame.")]],
+        slide_card("08-share.png", [[Wt("Share your")], [R("shame.")]],
                    "A card with your real personal best.", card)
 
     last = find("v11-collection", "09-collection", "03b-run-40", "01-launch")
     if last is None:
-        print("skipped 08-private.png: no capture found", file=sys.stderr)
+        print("skipped 09-private.png: no capture found", file=sys.stderr)
     else:
-        slide_phone("08-private.png", [[Wt("No ads. No accounts.")], [R("No excuses.")]],
+        slide_phone("09-private.png", [[Wt("No ads. No accounts.")], [R("No excuses.")]],
                     "Works offline. No data collected.", last)
 
 def main():
-    global SRC, OUT
+    global SRC, OUT, WITH_PRO_SLIDE
     ap = argparse.ArgumentParser(description="Build App Store marketing screenshots from real captures.")
     ap.add_argument("src", help="directory with the CI PNG captures (named by XCTAttachment name)")
     ap.add_argument("out", help="output directory")
     ap.add_argument("--set", dest="set", choices=["v10", "v11"], default="v10", help="slide set (default: v10)")
+    ap.add_argument("--with-pro-slide", action="store_true",
+                    help="also build 10-pro.png (only if the StoreKit price in the capture equals the real price)")
     args = ap.parse_args()
-    SRC, OUT = args.src, args.out
+    SRC, OUT, WITH_PRO_SLIDE = args.src, args.out, args.with_pro_slide
     {"v10": build_v10, "v11": build_v11}[args.set]()
 
 if __name__ == "__main__":

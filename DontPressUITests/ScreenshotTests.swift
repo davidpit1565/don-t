@@ -167,6 +167,27 @@ final class ScreenshotTests: XCTestCase {
         shot(app, "v11-egg-hatch")   // the creature stays up for ~4 s
     }
 
+    func testCaptureV11Pinata() {
+        let app = launch(["-UITestPro", "-UITestSeedTotal", "5000"])
+        XCTAssertTrue(app.buttons["pressButton"].waitForExistence(timeout: 10))
+        let picker = app.buttons["toyPicker.pinata"]
+        XCTAssertTrue(picker.waitForExistence(timeout: 5))
+        picker.tap()
+        let pinata = element(app, "pinataToy")
+        XCTAssertTrue(pinata.waitForExistence(timeout: 5))
+
+        // It bursts after 12...25 hits; 4 hits always leave it swinging.
+        for _ in 0..<4 { pinata.tap() }
+        shot(app, "v11-pinata")
+
+        var taps = 0
+        while !value(of: pinata).hasPrefix("Burst") && taps < 26 {
+            pinata.tap()
+            taps += 1
+        }
+        shot(app, "v11-pinata-burst")   // the prize stays up for ~3.5 s
+    }
+
     func testCaptureV11Balloon() {
         let app = launch(["-UITestPro"])
         XCTAssertTrue(app.buttons["pressButton"].waitForExistence(timeout: 10))
