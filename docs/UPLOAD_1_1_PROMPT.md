@@ -27,14 +27,14 @@ before that and ask me. Never print or commit secrets, certificates or API keys.
      Organizer (`open build/DontPress.xcarchive`) and tell me to press Distribute App > App Store Connect > Upload.
      Do not attempt to bypass signing.
 
-4. STORE SCREENSHOTS (1.1 set, from real captures only)
-   - `git fetch origin ci-screenshots && mkdir -p build/ci && git archive origin/ci-screenshots | tar -x -C build/ci`
-   - Install Pillow (`pip3 install pillow`) and the Inter font; Scripts/make_store_screenshots.py expects Inter OTF files
-     at the path in its FONT constant: adjust that path for macOS in a local, uncommitted copy only.
-   - `python3 Scripts/make_store_screenshots.py build/ci docs/appstore-1.1 --set v11`
-   - Open the PNGs and check each one: nothing cropped, no fake UI, numbers match the app. Tell me which slides were
-     skipped (the script skips a slide when a capture is missing; there is no Piñata capture yet).
-   - The 6.9" size is 1320x2868. Never fabricate UI.
+4. STORE SCREENSHOTS (1.1 set, already generated from real CI captures)
+   - The 9 finished slides (1320x2868, 6.9") are in docs/appstore-1.1/ (01-dont ... 09-private). Open each PNG and
+     check it: nothing cropped, no fake UI, numbers match the app. There is room for a 10th slide: the Pro offer
+     (10-pro.png). Do NOT build it unless the price in the capture equals my real App Store price (the CI capture
+     shows the test StoreKit price, $1.99). If I want it, ask me for the real price and regenerate the capture first.
+   - To regenerate: `git fetch origin ci-screenshots && mkdir -p build/ci && git archive origin/ci-screenshots | tar -x -C build/ci`,
+     then `python3 Scripts/make_store_screenshots.py build/ci docs/appstore-1.1 --set v11` (needs Pillow and the Inter font;
+     adjust the FONT path locally, uncommitted). Never fabricate UI.
 
 5. APP STORE CONNECT TEXT (I paste it myself; you do not have my credentials)
    - Write a file build/appstore-1.1-texts.txt from docs/RELEASE_1_1.md section by section: name, subtitle, promo
