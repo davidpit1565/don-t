@@ -1,0 +1,362 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "148ABC3F-48FA-4633-AB97-37FCCBDA35D5.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "10-share-card-daily_0_DDE16019-B45F-4062-98C1-679EAA0EC1B2.png",
+        "timestamp" : 1793584996.7
+      }
+    ],
+    "testIdentifier" : "ShareCardRenderTests/testDailyNoSpoilerCardRenders()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressTests/ShareCardRenderTests/testDailyNoSpoilerCardRenders"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "DE02D194-CC1F-4ED6-8C22-908562B1BEE0.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "09-share-card-v2-full_0_736B44E2-9266-4A37-949E-7FC6B26FEA9E.png",
+        "timestamp" : 1793584996.799
+      }
+    ],
+    "testIdentifier" : "ShareCardRenderTests/testFullV2CardWithHugeNumbersRenders()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressTests/ShareCardRenderTests/testFullV2CardWithHugeNumbersRenders"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "A4CA255B-CEFC-4543-94BC-43367E881887.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "08-share-card-huge_0_3A97D3A2-3CE2-4C54-963C-592589EA89AF.png",
+        "timestamp" : 1793584996.854
+      }
+    ],
+    "testIdentifier" : "ShareCardRenderTests/testHugeCountStillRenders()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressTests/ShareCardRenderTests/testHugeCountStillRenders"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "BB48D0CA-4703-4925-BDEE-B9D05D5235E7.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "07-share-card-847_0_356D6EE0-8E35-4403-8BEA-EF92FB15592F.png",
+        "timestamp" : 1793584996.963
+      }
+    ],
+    "testIdentifier" : "ShareCardRenderTests/testShareCardRendersPortraitImageAndAttachesIt()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressTests/ShareCardRenderTests/testShareCardRendersPortraitImageAndAttachesIt"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "7B11C0F7-D2FC-48D2-9E48-203058EF8F0D.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "06-accessibility-xl_0_B0883DA6-C4F6-449E-B050-8999D2359F6D.png",
+        "timestamp" : 1793585223.204
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureAccessibilityTextSize()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testCaptureAccessibilityTextSize"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "8F1A551E-CCA6-4050-B42A-494E7B43D5B0.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "11-theme-cobalt_0_B7B379E9-644F-4238-8F29-1BA30033E164.png",
+        "timestamp" : 1793585251.052
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "132B59A6-1CFA-48A5-A36E-05DC4F41E102.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "10-theme-gold_0_D1CF6A4C-F523-4746-9A5F-BA8A8ADA3C06.png",
+        "timestamp" : 1793585241.194
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "772AFD2B-6779-445B-A367-6CF38459C18A.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "12-pro-offer_0_84266580-90B3-4DDC-9610-2C0667E0D294.png",
+        "timestamp" : 1793585235.394
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "0D349B4E-5A4F-4A29-BB2C-DB7FF734AC2A.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "09-collection_0_0AF8DDC7-74CA-43A0-8ECD-5AC49182EFE5.png",
+        "timestamp" : 1793585232.349
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureCollectionAndThemes()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testCaptureCollectionAndThemes"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "FFBF7637-22A3-4253-934B-B8B2F698C088.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "05-large-numbers_0_EEAB3555-EF16-45AC-8A87-BD5401314B08.png",
+        "timestamp" : 1793585258.055
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureLargeNumbers()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testCaptureLargeNumbers"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "372426FD-9060-45F4-A4CD-AC3F0D9B7062.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "04-share-sheet_0_7671253F-3678-4675-A8D0-AA49DABAB7E3.png",
+        "timestamp" : 1793585327.046
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "C4CD8EE3-65D9-4538-B587-DD802FA7C017.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "03d-run-110_0_6EED7AAE-F36A-416E-BD88-326024832220.png",
+        "timestamp" : 1793585321.851
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "425E57F6-9C1C-43EE-87C3-85D172333BCB.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "03c-run-75_0_A89AD92F-03EE-48FA-8159-838DD67528C9.png",
+        "timestamp" : 1793585304.716
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "17220756-68DF-410A-B0FC-15E32E1CD4A5.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "03b-run-40_0_95AABF2D-2143-4E0A-9828-D2EBD6AFD19F.png",
+        "timestamp" : 1793585288.238
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "D0A8A0F8-12F5-4448-A385-FDD4BF15B4D8.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "03-milestone-25_0_30062B54-C689-45EB-B6EF-4BAC88D8DFBE.png",
+        "timestamp" : 1793585279.945
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "6D44D87B-7A24-4C9B-A499-9049E2F64373.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "02-run-12_0_CB1D85E8-D569-4B8F-9925-BDECE2E559E4.png",
+        "timestamp" : 1793585272.534
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "B79063D2-B0BF-4D8E-B0A0-4BC7CADE70AC.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "02a-unlock-10_0_6D8AF933-42C4-4AB4-9213-4A7C32F92FFC.png",
+        "timestamp" : 1793585270.607
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "1BCA19C4-2247-4E14-BD3F-CAA9FD449ABB.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "01-launch_0_1739BFDF-D9C8-45CF-9A84-7749449DE1FC.png",
+        "timestamp" : 1793585265.314
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureScreens()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testCaptureScreens"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "9176D46A-59AC-49D7-AF9A-C142E87DF170.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "v11-balloon-pop_0_11E7A9CA-DB7A-41AB-89F2-E2A33C16BC88.png",
+        "timestamp" : 1793585344.607
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "F622E806-B0CD-495C-B7C1-E7DA62B04A35.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "v11-balloon_0_6CC45D8B-9788-47F3-BE90-4D87AB631882.png",
+        "timestamp" : 1793585341.42
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureV11Balloon()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testCaptureV11Balloon"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "EB786A2A-8C92-4A08-B72A-FF622F521362.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "v11-collection_0_E99E23A1-46CA-4FE6-9ECA-2948C1A3B500.png",
+        "timestamp" : 1793585355.698
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureV11Collection()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testCaptureV11Collection"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "25774BBD-EA6F-4238-8518-408BE426DB91.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "v11-reactiondex_0_FEC7ED82-655A-49F6-9BCF-FEEDDD3D0EBC.png",
+        "timestamp" : 1793585413.117
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "72873B33-AD6D-415C-8894-B80E9410F240.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "v11-daily_0_0ADCF0BA-88C3-406F-8D02-4AA473C32436.png",
+        "timestamp" : 1793585391.703
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureV11DailyAndReactiondex()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testCaptureV11DailyAndReactiondex"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "0EABDC50-1D00-4CEF-8C32-B602AE364B43.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "v11-egg-hatch_0_EBE29585-3EDE-449E-A188-1AC7AF260000.png",
+        "timestamp" : 1793585428.252
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "3C366D3A-181C-4F73-9E6F-462C1225DFC3.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "v11-egg-crack_0_7F6C943E-E013-4F33-A669-B92395EF6617.png",
+        "timestamp" : 1793585426.191
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureV11Egg()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testCaptureV11Egg"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "8133DFC8-9206-4B6C-9FC7-7314A4643394.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "v11-pinata-burst_0_097366ED-CB0D-40B2-A734-46E92425264A.png",
+        "timestamp" : 1793585446.609
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "14BFBB08-1836-4BCA-9423-E12C869148E0.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "v11-pinata_0_B56ADCD7-6990-411B-8896-335B58A0BDA5.png",
+        "timestamp" : 1793585439.971
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureV11Pinata()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testCaptureV11Pinata"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "08C02725-C137-4247-873A-764B3E5ABE2B.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "v11-setpiece-50-lock_0_AD4F2008-3B70-4960-B37D-C7454A0EB9ED.png",
+        "timestamp" : 1793585484.211
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "EB6A4E8B-BCEE-4277-A9A1-E77E79C94075.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "v11-setpiece-25_0_18BC2749-7453-4741-9CEF-0E5134C5B984.png",
+        "timestamp" : 1793585467.601
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureV11SetPieces()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testCaptureV11SetPieces"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "1CD403CB-B38F-447D-A90D-9985D4D2649C",
+        "deviceName" : "iPhone 16",
+        "exportedFileName" : "19ACC4E1-C319-440E-90F2-92C26E008998.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "fit_0_47295C4A-5A38-4E83-8E16-95F9DEFFF62C.png",
+        "timestamp" : 1793585494.938
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testEverythingFitsOnOneScreen()",
+    "testIdentifierURL" : "test://com.apple.xcode/DontPress/DontPressUITests/ScreenshotTests/testEverythingFitsOnOneScreen"
+  }
+]
