@@ -33,7 +33,7 @@ or Open (needs the owner, a Mac, or Apple tooling).
 7. Decide on pricing and availability of the app (free, with the optional Pro purchase).
 8. **In-app purchase setup (required for Pro):**
    - Accept the **Paid Apps Agreement** and complete banking and tax info in App Store Connect (Business). Without it, the product never loads.
-   - Create a **non-consumable** in-app purchase with Product ID exactly `com.davidpitchkhadze.dontpress.pro`, price tier around €1.99, display name "DON'T PRESS Pro", description "Unlock all button styles right away."
+   - Create a **non-consumable** in-app purchase with Product ID exactly `com.davidpitchkhadze.dontpress.pro2`, price tier around €1.99, display name "DON'T PRESS Pro", description "Unlock all button styles right away."
    - Upload a review screenshot of the Pro offer (open the Collection and tap a locked style).
    - Attach the in-app purchase to the app version you submit; it is reviewed together with the app.
    - Test with a Sandbox tester and verify Restore Purchases after a reinstall.

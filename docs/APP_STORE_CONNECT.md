@@ -65,7 +65,7 @@ Free app. Choose territories. (The optional purchase is configured separately, b
 | --- | --- |
 | Type | Non-Consumable |
 | Reference name | DON'T PRESS Pro |
-| Product ID | `com.davidpitchkhadze.dontpress.pro` (exactly) |
+| Product ID | `com.davidpitchkhadze.dontpress.pro2` (exactly) |
 | Price | Tier ≈ €1.99 |
 | Display name | DON'T PRESS Pro |
 | Description | Unlock all button styles right away. |
