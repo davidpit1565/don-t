@@ -8,3 +8,6 @@ DerivedData/
 # agent worktrees (local only)
 .claude/worktrees/
 __pycache__/
+
+# Local build/export output
+build/
