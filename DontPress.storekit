@@ -5,12 +5,12 @@
   ],
   "products" : [
     {
-      "displayPrice" : "1.99",
+      "displayPrice" : "4.99",
       "familyShareable" : false,
       "internalID" : "6747000001",
       "localizations" : [
         {
-          "description" : "Unlock all button styles right away.",
+          "description" : "Toys, button styles and app icons, once.",
           "displayName" : "DON'T PRESS Pro",
           "locale" : "en_US"
         }
