@@ -5,7 +5,7 @@ no sales figures for this app yet, so nothing below is based on measured convers
 
 ## The problem
 
-In 1.0, Pro (`com.davidpitchkhadze.dontpress.pro`, non-consumable, about $1.99 / €1.99) does exactly one thing:
+In 1.0, Pro (`com.davidpitchkhadze.dontpress.pro2`, non-consumable, about $1.99 / €1.99) does exactly one thing:
 "Unlock all button styles right away." Every one of those styles can also be earned for free by playing. A critical
 review called that weak, and it is: it sells *impatience*, it has nothing a player can see before buying, and it
 has nothing to do with the 1.1 features people will actually talk about (sounds, toys, set-pieces, the Reactiondex).
@@ -71,7 +71,7 @@ the privacy page and the product), tip-jar consumables (fine later, but they do 
 
 ### Recommended: keep the existing product ID
 
-Keep **`com.davidpitchkhadze.dontpress.pro`** as the single Pro product and expand what it unlocks in the app.
+Keep **`com.davidpitchkhadze.dontpress.pro2`** as the single Pro product and expand what it unlocks in the app.
 
 What you do in App Store Connect (Monetization → In-App Purchases → DON'T PRESS Pro):
 
@@ -89,7 +89,7 @@ What you do in App Store Connect (Monetization → In-App Purchases → DON'T PR
 7. **Family Sharing:** decide deliberately. Once turned on for a product it cannot be turned off.
 
 What the code must do (for the code agents, not this doc): the entitlement check stays "does the user own
-`...dontpress.pro`", and that single flag unlocks the whole Pro 2.0 set. The cached `dontpress.isPro` value keeps
+`...dontpress.pro2`", and that single flag unlocks the whole Pro 2.0 set. The cached `dontpress.isPro` value keeps
 working. No migration is needed.
 
 **Implications for existing 1.0 buyers:** they own the same product ID, so they automatically get everything Pro 2.0

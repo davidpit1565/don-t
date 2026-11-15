@@ -6,7 +6,7 @@ import Observation
 @MainActor
 @Observable
 final class ProStore {
-    static let productID = "com.davidpitchkhadze.dontpress.pro"
+    static let productID = "com.davidpitchkhadze.dontpress.pro2"
 
     private(set) var product: Product?
     private(set) var isPro: Bool

@@ -14,7 +14,7 @@ before that and ask me. Never print or commit secrets, certificates or API keys.
      Scripts/generate_xcodeproj.py, run `python3 Scripts/generate_xcodeproj.py`, and commit on a new branch (no push
      to main without asking).
    - Do not change the bundle ID (com.davidpitchkhadze.dontpress) or the Pro product ID
-     (com.davidpitchkhadze.dontpress.pro). Do not overwrite my signing team: ask me to pick it in Xcode if missing.
+     (com.davidpitchkhadze.dontpress.pro2). Do not overwrite my signing team: ask me to pick it in Xcode if missing.
 
 2. TEST LOCALLY
    - `swift test` (Core logic).
